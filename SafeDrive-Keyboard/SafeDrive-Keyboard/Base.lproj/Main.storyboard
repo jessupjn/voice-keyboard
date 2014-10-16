@@ -16,19 +16,19 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Xww-Sb-OEl">
-                                <rect key="frame" x="252" y="95" width="97" height="30"/>
+                            <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Xww-Sb-OEl">
+                                <rect key="frame" x="0.5" y="95" width="600" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="YQy-dK-Ux7"/>
-                                    <constraint firstAttribute="width" constant="97" id="eV1-Vm-bk3"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="yes"/>
                             </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="Xww-Sb-OEl" secondAttribute="centerX" constant="-0.5" id="RhS-yU-Ss8"/>
+                            <constraint firstAttribute="width" secondItem="Xww-Sb-OEl" secondAttribute="width" id="mgr-jo-0zP"/>
                             <constraint firstItem="Xww-Sb-OEl" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="75" id="rpU-70-J7I"/>
                         </constraints>
                     </view>

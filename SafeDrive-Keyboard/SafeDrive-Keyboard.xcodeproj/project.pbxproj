@@ -539,6 +539,7 @@
 				04B36FC119EF0A3C00ADB773 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		04B36FC219EF0A3C00ADB773 /* Build configuration list for PBXNativeTarget "SafeDrive-KeyboardTests" */ = {
 			isa = XCConfigurationList;
@@ -547,6 +548,7 @@
 				04B36FC419EF0A3C00ADB773 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		04B36FD419EF0ABA00ADB773 /* Build configuration list for PBXNativeTarget "SafeD" */ = {
 			isa = XCConfigurationList;
@@ -555,6 +557,7 @@
 				04B36FD619EF0ABA00ADB773 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
