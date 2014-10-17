@@ -36,8 +36,8 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate {
     //
     var lowerCase : [String] = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "SH", "z", "x", "c", "v", "b", "n", "m", "⌫"]
     var upperCase : [String] = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "SH", "Z", "X", "C", "V", "B", "N", "M", "⌫"]
-    var number1 : [String] = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "SH", "Z", "X", "C", "V", "B", "N", "M", "⌫"]
-    var number2 : [String] = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "SH", "Z", "X", "C", "V", "B", "N", "M", "⌫"]
+    var number1 : [String] = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "/", ":", ";", "(", ")", "$", "&", "@", "\"", "#+=", ".", ",", "?", "!", "'", "⌫"]
+    var number2 : [String] = ["[", "]", "{", "}", "#", "%", "^", "*", "+", "=", "_", "\\", "|", "~", "<", ">", "€", "£", "¥", "", "123", ".", ",", "?", "!", "'", "⌫"]
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
@@ -61,7 +61,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate {
         let buttonTitles1 = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"]
         let buttonTitles2 = ["A", "S", "D", "F", "G", "H", "J", "K", "L"]
         let buttonTitles3 = ["SH", "Z", "X", "C", "V", "B", "N", "M", "⌫"]
-        let buttonTitles4 = ["#", "NEXT", "MIC", "space", "return"]
+        let buttonTitles4 = ["123", "NEXT", "MIC", "space", "return"]
         
         screenWidth = UIScreen.mainScreen().bounds.size.width
         buttonWidth = screenWidth! / 11
@@ -142,19 +142,21 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate {
         button.setTitleColor(foreGround, forState: .Normal)
         button.tag = tagNum++
         
-        if title == "MIC" {
+        if title == "MIC" || title == "NEXT" {
+            button.contentMode = .ScaleAspectFit
             button.setBackgroundImage(UIImage(named:title), forState:.Normal)
+            button.setTitle(title, forState:.Reserved)
+
         }
         else {
             button.setTitle(title, forState: .Normal)
         }
         
-        button.contentVerticalAlignment = .Top
+        button.contentVerticalAlignment = .Center
         button.contentHorizontalAlignment = .Center
         button.setTitleColor(backGround, forState: UIControlState.Highlighted)
         button.tintColor = foreGround
         button.addTarget(self, action: "didTapButton:", forControlEvents: .TouchUpInside)
-        button.backgroundColor = .greenColor()
         return button
     }
     
@@ -166,12 +168,18 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate {
     func didTapButton(sender: AnyObject?) {
         
         let button = sender as UIButton
-        let title : String = button.titleForState( button.state )!
+        var title : String? = button.titleForState( .Normal )?
         var proxy = textDocumentProxy as UITextDocumentProxy
+
+        if title == nil {
+            title = button.titleForState( .Reserved )?
+        }
         
-        switch(title){
+        switch(title!){
             case "⌫":
                 proxy.deleteBackward()
+            case "123":
+                showMic()
             case "MIC":
                 showMic()
             case "SH":
@@ -368,7 +376,6 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate {
             return;
         }
         
-//      ["#", "NEXT", "MIC", "space", "return"]
         var _middleConstraint = NSLayoutConstraint(item: buttons[3], attribute:.CenterX, relatedBy: .Equal, toItem: mainView, attribute: .CenterX, multiplier: 1.0, constant: buttonWidth!-13)
         var _topConstraint = NSLayoutConstraint(item: buttons[3], attribute: .Top, relatedBy: .Equal, toItem: mainView, attribute: .Top, multiplier: 1.0, constant: 10)
         var _bottomConstraint = NSLayoutConstraint(item: buttons[3], attribute: .Bottom, relatedBy: .Equal, toItem: mainView, attribute: .Bottom, multiplier: 1.0, constant: 0)
@@ -431,7 +438,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate {
                         item:rowView, attribute:NSLayoutAttribute.Height,
                         relatedBy:NSLayoutRelation.Equal,
                         toItem:nil, attribute:NSLayoutAttribute.NotAnAttribute,
-                        multiplier:0, constant:UIScreen.mainScreen().bounds.height/12))
+                        multiplier:0, constant:UIScreen.mainScreen().bounds.height/11))
                 } else {
                     self.view.addConstraint(NSLayoutConstraint(
                         item:rowView, attribute:NSLayoutAttribute.Height,
