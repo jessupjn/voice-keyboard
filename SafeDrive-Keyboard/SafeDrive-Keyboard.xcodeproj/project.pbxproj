@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0482E2FB19F1ABF4003B5378 /* IMG.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0482E2FA19F1ABF4003B5378 /* IMG.xcassets */; };
 		04B36FA619EF0A3C00ADB773 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B36FA519EF0A3C00ADB773 /* AppDelegate.swift */; };
 		04B36FA819EF0A3C00ADB773 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B36FA719EF0A3C00ADB773 /* ViewController.swift */; };
 		04B36FAB19EF0A3C00ADB773 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04B36FA919EF0A3C00ADB773 /* Main.storyboard */; };
@@ -56,6 +57,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0482E2FA19F1ABF4003B5378 /* IMG.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = IMG.xcassets; sourceTree = "<group>"; };
 		04B36FA019EF0A3C00ADB773 /* SafeDrive-Keyboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SafeDrive-Keyboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		04B36FA419EF0A3C00ADB773 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		04B36FA519EF0A3C00ADB773 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 			children = (
 				04B36FCD19EF0ABA00ADB773 /* KeyboardViewController.swift */,
 				04B36FCB19EF0ABA00ADB773 /* Supporting Files */,
+				0482E2FA19F1ABF4003B5378 /* IMG.xcassets */,
 			);
 			path = SafeD;
 			sourceTree = "<group>";
@@ -292,6 +295,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0482E2FB19F1ABF4003B5378 /* IMG.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,16 +7,37 @@
 //
 
 import UIKit
+import CoreLocation
 
-class KeyboardViewController: UIInputViewController {
+enum ShiftStates : String {
+    case None = "NONE", Shift = "SHIFT", Caps = "CAPS", Number1 = "NUMBER1", Number2 = "NUMBER2"
+    static let allValues = [None, Shift, Caps]
+}
+
+class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate {
 
     @IBOutlet var nextKeyboardButton: UIButton!
 
+    // options
+    var TRACKS_SPEED : Bool = true
+    var CUSTOM_SHAPE : Bool = true
     var foreGround : UIColor = UIColor(red:202/255.0, green:31/255.0, blue:0/255.0, alpha: 1)
     var backGround : UIColor = UIColor.lightTextColor()
+    
+    // variables
+    let locManager : CLLocationManager = CLLocationManager()
     var screenWidth : CGFloat?
     var buttonWidth : CGFloat?
     var tagNum : Int = 1000;
+    var shiftState = ShiftStates.None
+    var goToCaps = false
+    var addPeriod = false
+
+    //
+    var lowerCase : [String] = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "SH", "z", "x", "c", "v", "b", "n", "m", "⌫"]
+    var upperCase : [String] = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "SH", "Z", "X", "C", "V", "B", "N", "M", "⌫"]
+    var number1 : [String] = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "SH", "Z", "X", "C", "V", "B", "N", "M", "⌫"]
+    var number2 : [String] = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "SH", "Z", "X", "C", "V", "B", "N", "M", "⌫"]
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
@@ -26,18 +47,21 @@ class KeyboardViewController: UIInputViewController {
 
     override func viewWillAppear(animated: Bool) {
         self.view.backgroundColor = backGround
-        buildKeyboard()
+        
+        buttonBorders(self.view)
+
     }
     
     func buildKeyboard()
     {
-        println("buildKeyboard");
+        println("buildKeyboard")
+        tagNum = 1000
         
         // BUILDING VARIOUS BUTTONS USED FOR THE KEYBOARD
         let buttonTitles1 = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"]
         let buttonTitles2 = ["A", "S", "D", "F", "G", "H", "J", "K", "L"]
-        let buttonTitles3 = ["SH", "Z", "X", "C", "V", "B", "N", "M", "BP"]
-        let buttonTitles4 = ["NEXT", "EMOJI", "SPACE", "MIC"]
+        let buttonTitles3 = ["SH", "Z", "X", "C", "V", "B", "N", "M", "⌫"]
+        let buttonTitles4 = ["#", "NEXT", "MIC", "space", "return"]
         
         screenWidth = UIScreen.mainScreen().bounds.size.width
         buttonWidth = screenWidth! / 11
@@ -58,25 +82,20 @@ class KeyboardViewController: UIInputViewController {
         row4.setTranslatesAutoresizingMaskIntoConstraints(false)
         
         addConstraintsToInputView(self.view, rowViews: [row1, row2, row3, row4])
+        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Perform custom UI setup here
-        self.nextKeyboardButton = UIButton.buttonWithType(.System) as UIButton
-    
-        self.nextKeyboardButton.setTitle(NSLocalizedString("Next Keyboard", comment: "Title for 'Next Keyboard' button"), forState: .Normal)
-        self.nextKeyboardButton.sizeToFit()
-        self.nextKeyboardButton.setTranslatesAutoresizingMaskIntoConstraints(false)
-    
-        self.nextKeyboardButton.addTarget(self, action: "advanceToNextInputMode", forControlEvents: .TouchUpInside)
+        if TRACKS_SPEED {
+            self.locManager.delegate = self
+            self.locManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+            self.locManager.distanceFilter = kCLDistanceFilterNone
+            self.locManager.startUpdatingLocation()
+        }
         
-//        self.view.addSubview(self.nextKeyboardButton)
-//    
-//        var nextKeyboardButtonLeftSideConstraint = NSLayoutConstraint(item: self.nextKeyboardButton, attribute: .Left, relatedBy: .Equal, toItem: self.view, attribute: .Left, multiplier: 1.0, constant: 0.0)
-//        var nextKeyboardButtonBottomConstraint = NSLayoutConstraint(item: self.nextKeyboardButton, attribute: .Bottom, relatedBy: .Equal, toItem: self.view, attribute: .Bottom, multiplier: 1.0, constant: 0.0)
-//        self.view.addConstraints([nextKeyboardButtonLeftSideConstraint, nextKeyboardButtonBottomConstraint])
+        buildKeyboard()
 
     }
 
@@ -91,15 +110,7 @@ class KeyboardViewController: UIInputViewController {
 
     override func textDidChange(textInput: UITextInput) {
         // The app has just changed the document's contents, the document context has been updated.
-    
-        var textColor: UIColor
-        var proxy = self.textDocumentProxy as UITextDocumentProxy
-        if proxy.keyboardAppearance == UIKeyboardAppearance.Dark {
-            textColor = UIColor.whiteColor()
-        } else {
-            textColor = UIColor.blackColor()
-        }
-        self.nextKeyboardButton.setTitleColor(textColor, forState: .Normal)
+
     }
     
     //
@@ -116,32 +127,34 @@ class KeyboardViewController: UIInputViewController {
         }
         
         addIndividualButtonConstraints(buttons, mainView: keyboardRowView)
-        for button in buttons {
-            roundCorners(button)
-        }
         
         return keyboardRowView
     }
     
     func createButtonWithTitle(title: String) -> UIButton {
-        
         let button = UIButton.buttonWithType(.System) as UIButton
         button.frame = CGRectMake(0, 0, buttonWidth!, 35)
-        button.setTitle(title, forState: .Normal)
         button.sizeToFit()
-        button.frame = CGRectMake(0, 0, button.frame.size.width+2, 35)
+        button.frame = CGRectMake(0, 0, button.frame.size.width+4, 35)
         button.titleLabel!.font = UIFont.systemFontOfSize(18)
         button.setTranslatesAutoresizingMaskIntoConstraints(false)
-        button.backgroundColor = UIColor.clearColor();
+        button.backgroundColor = UIColor.clearColor()
         button.setTitleColor(foreGround, forState: .Normal)
         button.tag = tagNum++
+        
+        if title == "MIC" {
+            button.setBackgroundImage(UIImage(named:title), forState:.Normal)
+        }
+        else {
+            button.setTitle(title, forState: .Normal)
+        }
         
         button.contentVerticalAlignment = .Top
         button.contentHorizontalAlignment = .Center
         button.setTitleColor(backGround, forState: UIControlState.Highlighted)
         button.tintColor = foreGround
         button.addTarget(self, action: "didTapButton:", forControlEvents: .TouchUpInside)
-
+        button.backgroundColor = .greenColor()
         return button
     }
     
@@ -157,40 +170,94 @@ class KeyboardViewController: UIInputViewController {
         var proxy = textDocumentProxy as UITextDocumentProxy
         
         switch(title){
-            case "BP":
+            case "⌫":
                 proxy.deleteBackward()
-            case "SH":
-                println("shift")
             case "MIC":
                 showMic()
+            case "SH":
+                if shiftState == ShiftStates.None {
+                    shiftState = ShiftStates.Shift
+                    goToCaps = true
+                    dispatch_after( dispatch_time(DISPATCH_TIME_NOW, Int64(0.17 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), {
+                        self.goToCaps = false
+                    })
+                    button.setTitleColor(UIColor.blueColor(), forState:.Normal)
+                } else if shiftState == ShiftStates.Caps {
+                    shiftState = ShiftStates.None
+                    button.setTitleColor( UIColor.blackColor(), forState: .Normal)
+                } else {
+                    if goToCaps {
+                        shiftState = ShiftStates.Caps
+                        button.setTitleColor(UIColor.redColor(), forState:.Normal)
+                    } else {
+                        shiftState = ShiftStates.None
+                        button.setTitleColor(UIColor.blackColor(), forState:.Normal)
+                    }
+                }
             case "NEXT":
                 self.advanceToNextInputMode()
             case "SPACE":
-                proxy.insertText(" ")
+                if addPeriod {
+                    proxy.deleteBackward()
+                    proxy.insertText(". ")
+                }
+                else { proxy.insertText(" ") }
+                addPeriod = true;
+                dispatch_after( dispatch_time(DISPATCH_TIME_NOW, Int64(0.17 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), {
+                    self.addPeriod = false
+                })
             default:
-                proxy.insertText(title)
+                if shiftState == ShiftStates.None {
+                    proxy.insertText(lowerCase[button.tag-1000])
+                } else if shiftState == ShiftStates.Shift {
+                    proxy.insertText(upperCase[button.tag-1000])
+                    shiftState = ShiftStates.None
+                } else if shiftState == ShiftStates.Caps {
+                    proxy.insertText(upperCase[button.tag-1000])
+                } else if shiftState == ShiftStates.Number1 {
+                    proxy.insertText(number1[button.tag-1000])
+                } else if shiftState == ShiftStates.Number2 {
+                    proxy.insertText(number2[button.tag-1000])
+                }
         }
     }
     
     //
     //                      CREATE BUTTON SHAPE
     //
+    func buttonBorders(view: UIView)
+    {
+        println(view.tag)
+        if view.isKindOfClass(UIButton) && view.tag >= 1000 {
+            if CUSTOM_SHAPE {
+                roundCorners(view as UIButton)
+            }
+            else {
+                (view as UIButton).layer.borderColor = foreGround.CGColor
+                (view as UIButton).layer.borderWidth = 1
+                (view as UIButton).layer.cornerRadius = 5
+            }
+            return
+        }
+        for viw in view.subviews {
+            buttonBorders(viw as UIView)
+        }
+    }
     func roundCorners(button: UIView)
     {
-        var bounds : CGRect = button.frame
-        if (button as UIButton).titleLabel?.text == "SPACE"{
-            println(bounds)
-        }
+        
+        var bounds : CGRect = button.bounds
         var bezierPath : UIBezierPath = UIBezierPath()
+        bezierPath.lineJoinStyle = kCGLineJoinRound
         bezierPath.moveToPoint( CGPointMake(0,bounds.height/2) )
-        bezierPath.addLineToPoint( CGPointMake(0,bounds.height/3) )
-        bezierPath.addLineToPoint( CGPointMake(bounds.width/3,0) )
-        bezierPath.addLineToPoint( CGPointMake(9*bounds.width/10,0) )
-        bezierPath.addLineToPoint( CGPointMake(bounds.width,bounds.height/10) )
-        bezierPath.addLineToPoint( CGPointMake(bounds.width,2*bounds.height/3) )
-        bezierPath.addLineToPoint( CGPointMake(2*bounds.width/3,bounds.height) )
-        bezierPath.addLineToPoint( CGPointMake(bounds.width/10,bounds.height) )
-        bezierPath.addLineToPoint( CGPointMake(0,9*bounds.height/10) )
+        bezierPath.addLineToPoint( CGPointMake(0,15) )
+        bezierPath.addLineToPoint( CGPointMake(15,0) )
+        bezierPath.addLineToPoint( CGPointMake(bounds.width-3,0) )
+        bezierPath.addLineToPoint( CGPointMake(bounds.width,3) )
+        bezierPath.addLineToPoint( CGPointMake(bounds.width,bounds.height-15) )
+        bezierPath.addLineToPoint( CGPointMake(bounds.width-15,bounds.height) )
+        bezierPath.addLineToPoint( CGPointMake(3,bounds.height) )
+        bezierPath.addLineToPoint( CGPointMake(0,bounds.height-3) )
         bezierPath.addLineToPoint( CGPointMake(0,bounds.height/2) )
         bezierPath.closePath()
         
@@ -239,8 +306,8 @@ class KeyboardViewController: UIInputViewController {
                 if(buttons[0].titleLabel?.text == "SH"){
                     if(l == 0)
                     {
-                        LwidthConstraint.constant = 6
-                        HwidthConstraint.constant = 6
+                        LwidthConstraint.constant = 14
+                        HwidthConstraint.constant = 14
                     }
                     else
                     {
@@ -263,7 +330,7 @@ class KeyboardViewController: UIInputViewController {
         else if buttons.count == 10
         {
             var ltopConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Top, relatedBy: .Equal, toItem: mainView, attribute: .Top, multiplier: 1.0, constant: 10)
-            var lbotConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Bottom, relatedBy: .Equal, toItem: mainView, attribute: .Bottom, multiplier: 1.0, constant: -1)
+            var lbotConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Bottom, relatedBy: .Equal, toItem: mainView, attribute: .Bottom, multiplier: 1.0, constant: 0)
             
             var l = 4, h = 5
             let dist : CGFloat = UIScreen.mainScreen().bounds.width / 140
@@ -292,54 +359,63 @@ class KeyboardViewController: UIInputViewController {
                 mainView.addConstraints([LwidthConstraint, HwidthConstraint])
                 mainView.addConstraints([LdistRight, HdistLeft])
                 
+                if buttons[l].tag == 1000 {
+                    buttonWidth = buttons[l].frame.size.width
+                }
                 l--
                 h++
             }
             return;
         }
         
-        for (index, button) in enumerate(buttons) {
-            
-            var topConstraint = NSLayoutConstraint(item: button, attribute: .Top, relatedBy: .Equal, toItem: mainView, attribute: .Top, multiplier: 1.0, constant: 10)
-            
-            var bottomConstraint = NSLayoutConstraint(item: button, attribute: .Bottom, relatedBy: .Equal, toItem: mainView, attribute: .Bottom, multiplier: 1.0, constant: -1)
-            
-            var rightConstraint : NSLayoutConstraint!
-            
-            if index == buttons.count - 1 {
-                
-                rightConstraint = NSLayoutConstraint(item: button, attribute: .Right, relatedBy: .Equal, toItem: mainView, attribute: .Right, multiplier: 1.0, constant: -1)
-                
-            }
-            else{
-                
-                let nextButton = buttons[index+1]
-                rightConstraint = NSLayoutConstraint(item: button, attribute: .Right, relatedBy: .Equal, toItem: nextButton, attribute: .Left, multiplier: 1.0, constant: -1)
-            }
-            
-            
-            var leftConstraint : NSLayoutConstraint!
-            if index == 0 {
-                leftConstraint = NSLayoutConstraint(item: button, attribute: .Left, relatedBy: .Equal, toItem: mainView, attribute: .Left, multiplier: 1.0, constant: 3)
-                
-                println(button.tag)
-            }
-            else{
-                let prevtButton = buttons[index-1]
-                leftConstraint = NSLayoutConstraint(item: button, attribute: .Left, relatedBy: .Equal, toItem: prevtButton, attribute: .Right, multiplier: 1.0, constant: 1)
-                var firstButton = buttons[0]
-                var widthConstraint = NSLayoutConstraint(item: firstButton, attribute: .Width, relatedBy: .Equal, toItem: button, attribute: .Width, multiplier: 1.0, constant: 0)
-                
-                mainView.addConstraint(widthConstraint)
-            }
-            
-            mainView.addConstraints([topConstraint, bottomConstraint, rightConstraint, leftConstraint])
-        }
+//      ["#", "NEXT", "MIC", "space", "return"]
+        var _middleConstraint = NSLayoutConstraint(item: buttons[3], attribute:.CenterX, relatedBy: .Equal, toItem: mainView, attribute: .CenterX, multiplier: 1.0, constant: buttonWidth!-13)
+        var _topConstraint = NSLayoutConstraint(item: buttons[3], attribute: .Top, relatedBy: .Equal, toItem: mainView, attribute: .Top, multiplier: 1.0, constant: 10)
+        var _bottomConstraint = NSLayoutConstraint(item: buttons[3], attribute: .Bottom, relatedBy: .Equal, toItem: mainView, attribute: .Bottom, multiplier: 1.0, constant: 0)
+        var _widthConstraint = NSLayoutConstraint(item: buttons[3], attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: buttonWidth!*4 + 8)
+        _topConstraint.priority = 1000
+        _bottomConstraint.priority = 1000
+        mainView.addConstraints([_middleConstraint, _bottomConstraint, _topConstraint, _widthConstraint])
+        
+        let dist : CGFloat = UIScreen.mainScreen().bounds.width / 125
+        
+        // return button
+        var centerY = NSLayoutConstraint(item: buttons[4], attribute: .CenterY, relatedBy: .Equal, toItem: buttons[3], attribute: .CenterY, multiplier: 1.0, constant: 0)
+        var heightConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Height, relatedBy: .Equal, toItem: buttons[3], attribute: .Height, multiplier: 1.0, constant: 0)
+        var widthConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 2*buttonWidth! + dist + 6)
+        var borderDistConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Left, relatedBy: .Equal, toItem: buttons[3], attribute: .Right, multiplier: 1.0, constant: dist + 6)
+
+        mainView.addConstraints([centerY, heightConstraint, widthConstraint, borderDistConstraint])
+
+        // mic button
+        centerY = NSLayoutConstraint(item: buttons[2], attribute: .CenterY, relatedBy: .Equal, toItem: buttons[3], attribute: .CenterY, multiplier: 1.0, constant: 0)
+        heightConstraint = NSLayoutConstraint(item: buttons[2], attribute: .Height, relatedBy: .Equal, toItem: buttons[3], attribute: .Height, multiplier: 1.0, constant: 0)
+        widthConstraint = NSLayoutConstraint(item: buttons[2], attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: buttonWidth!)
+        borderDistConstraint = NSLayoutConstraint(item: buttons[2], attribute: .Right, relatedBy: .Equal, toItem: buttons[3], attribute: .Left, multiplier: 1.0, constant: -dist - 6)
+        
+        mainView.addConstraints([centerY, heightConstraint, widthConstraint, borderDistConstraint])
+        
+        // next button
+        centerY = NSLayoutConstraint(item: buttons[1], attribute: .CenterY, relatedBy: .Equal, toItem: buttons[3], attribute: .CenterY, multiplier: 1.0, constant: 0)
+        heightConstraint = NSLayoutConstraint(item: buttons[1], attribute: .Height, relatedBy: .Equal, toItem: buttons[3], attribute: .Height, multiplier: 1.0, constant: 0)
+        widthConstraint = NSLayoutConstraint(item: buttons[1], attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: buttonWidth!)
+        borderDistConstraint = NSLayoutConstraint(item: buttons[1], attribute: .Right, relatedBy: .Equal, toItem: buttons[2], attribute: .Left, multiplier: 1.0, constant: -dist - 6)
+        
+        mainView.addConstraints([centerY, heightConstraint, widthConstraint, borderDistConstraint])
+        
+        // number button
+        centerY = NSLayoutConstraint(item: buttons[0], attribute: .CenterY, relatedBy: .Equal, toItem: buttons[3], attribute: .CenterY, multiplier: 1.0, constant: 0)
+        heightConstraint = NSLayoutConstraint(item: buttons[0], attribute: .Height, relatedBy: .Equal, toItem: buttons[3], attribute: .Height, multiplier: 1.0, constant: 0)
+        widthConstraint = NSLayoutConstraint(item: buttons[0], attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: buttonWidth!)
+        borderDistConstraint = NSLayoutConstraint(item: buttons[0], attribute: .Right, relatedBy: .Equal, toItem: buttons[1], attribute: .Left, multiplier: 1.0, constant: -dist - 6)
+        
+        mainView.addConstraints([centerY, heightConstraint, widthConstraint, borderDistConstraint])
     }
     
     func addConstraintsToInputView(inputView: UIView, rowViews: [UIView]){
         
         for (index, rowView) in enumerate(rowViews) {
+
             var rightSideConstraint = NSLayoutConstraint(item: rowView, attribute: .Right, relatedBy: .Equal, toItem: inputView, attribute: .Right, multiplier: 1.0, constant: -1)
             
             var leftConstraint = NSLayoutConstraint(item: rowView, attribute: .Left, relatedBy: .Equal, toItem: inputView, attribute: .Left, multiplier: 1.0, constant: 1)
@@ -350,11 +426,19 @@ class KeyboardViewController: UIInputViewController {
             
             if index == 0 {
                 topConstraint = NSLayoutConstraint(item: rowView, attribute: .Top, relatedBy: .Equal, toItem: inputView, attribute: .Top, multiplier: 1.0, constant: 0)
-                self.view.addConstraint(NSLayoutConstraint(
-                    item:rowView, attribute:NSLayoutAttribute.Height,
-                    relatedBy:NSLayoutRelation.Equal,
-                    toItem:nil, attribute:NSLayoutAttribute.NotAnAttribute,
-                    multiplier:0, constant:UIScreen.mainScreen().bounds.size.height/12))
+                if UIScreen.mainScreen().bounds.height > UIScreen.mainScreen().bounds.width {
+                    self.view.addConstraint(NSLayoutConstraint(
+                        item:rowView, attribute:NSLayoutAttribute.Height,
+                        relatedBy:NSLayoutRelation.Equal,
+                        toItem:nil, attribute:NSLayoutAttribute.NotAnAttribute,
+                        multiplier:0, constant:UIScreen.mainScreen().bounds.height/12))
+                } else {
+                    self.view.addConstraint(NSLayoutConstraint(
+                        item:rowView, attribute:NSLayoutAttribute.Height,
+                        relatedBy:NSLayoutRelation.Equal,
+                        toItem:nil, attribute:NSLayoutAttribute.NotAnAttribute,
+                        multiplier:0, constant:UIScreen.mainScreen().bounds.height/8))
+                }
 
             }else{
                 
@@ -387,7 +471,8 @@ class KeyboardViewController: UIInputViewController {
     }
     
     override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
-        var time = dispatch_time(DISPATCH_TIME_NOW, Int64(duration - 0.05))
+        println(duration)
+        var time = dispatch_time(DISPATCH_TIME_NOW, Int64((duration-0.05) * Double(NSEC_PER_SEC)))
         dispatch_after(time, dispatch_get_main_queue(), {
             for view in self.view.subviews
             {
@@ -396,8 +481,8 @@ class KeyboardViewController: UIInputViewController {
         })
     }
     override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
-        buttonWidth = UIScreen.mainScreen().bounds.size.width / 11
         buildKeyboard()
+        buttonBorders(self.view)
     }
     
     func showMic()
@@ -405,5 +490,19 @@ class KeyboardViewController: UIInputViewController {
         
     }
 
+    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
+        if(locations.count > 0)
+        {
+            var loc : CLLocation = locations[0] as CLLocation
+            println(loc)
+            println(loc.speed)
+        }
+    }
+    
+    func locationManager(manager: CLLocationManager!, didUpdateToLocation newLocation: CLLocation!, fromLocation oldLocation: CLLocation!) {
+        
+        
+        
+    }
     
 }
