@@ -598,9 +598,11 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         }
         
         else {
+            buttonWidth = screenWidth / 10.7
+            
             var _middleConstraint = NSLayoutConstraint(item: buttons[3], attribute:.CenterX, relatedBy: .Equal, toItem: mainView, attribute: .CenterX, multiplier: 1.0, constant: buttonWidth-13)
-            var _topConstraint = NSLayoutConstraint(item: buttons[3], attribute: .Top, relatedBy: .Equal, toItem: mainView, attribute: .Top, multiplier: 1.0, constant: 2)
-            var _bottomConstraint = NSLayoutConstraint(item: buttons[3], attribute: .Bottom, relatedBy: .Equal, toItem: mainView, attribute: .Bottom, multiplier: 1.0, constant: -2)
+            var _topConstraint = NSLayoutConstraint(item: buttons[3], attribute: .Top, relatedBy: .Equal, toItem: mainView, attribute: .Top, multiplier: 1.0, constant: 1)
+            var _bottomConstraint = NSLayoutConstraint(item: buttons[3], attribute: .Bottom, relatedBy: .Equal, toItem: mainView, attribute: .Bottom, multiplier: 1.0, constant: -4)
             var _widthConstraint = NSLayoutConstraint(item: buttons[3], attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: buttonWidth*4 + 8)
             _topConstraint.priority = 1000
             _bottomConstraint.priority = 1000
@@ -639,7 +641,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             borderDistConstraint = NSLayoutConstraint(item: buttons[0], attribute: .Right, relatedBy: .Equal, toItem: buttons[1], attribute: .Left, multiplier: 1.0, constant: 0)
             
             mainView.addConstraints([centerY, heightConstraint, widthConstraint, borderDistConstraint])
-            return;
+
         }
     }
     
@@ -647,14 +649,13 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         
         for (index, rowView) in enumerate(rowViews) {
             
+            // LEFT/RIGHT SIDES
             var rightSideConstraint = NSLayoutConstraint(item: rowView, attribute: .Right, relatedBy: .Equal, toItem: inputView, attribute: .Right, multiplier: 1.0, constant: -1)
-            
             var leftConstraint = NSLayoutConstraint(item: rowView, attribute: .Left, relatedBy: .Equal, toItem: inputView, attribute: .Left, multiplier: 1.0, constant: 1)
-            
             inputView.addConstraints([leftConstraint, rightSideConstraint])
             
-            var topConstraint: NSLayoutConstraint
             
+            var topConstraint: NSLayoutConstraint
             if index == 0 {
                 topConstraint = NSLayoutConstraint(item: rowView, attribute: .Top, relatedBy: .Equal, toItem: inputView, attribute: .Top, multiplier: 1.0, constant: 0)
                 if UIScreen.mainScreen().bounds.height > UIScreen.mainScreen().bounds.width {
@@ -670,7 +671,6 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
                         toItem:nil, attribute:NSLayoutAttribute.NotAnAttribute,
                         multiplier:0, constant:UIScreen.mainScreen().bounds.height/8))
                 }
-
             }else{
                 
                 let prevRow = rowViews[index-1]
@@ -685,11 +685,10 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             
             var bottomConstraint: NSLayoutConstraint
             
+            // BOTTOM
             if index == rowViews.count - 1 {
                 bottomConstraint = NSLayoutConstraint(item: rowView, attribute: .Bottom, relatedBy: .Equal, toItem: inputView, attribute: .Bottom, multiplier: 1.0, constant: 0)
-                
             }else{
-                
                 let nextRow = rowViews[index+1]
                 bottomConstraint = NSLayoutConstraint(item: rowView, attribute: .Bottom, relatedBy: .Equal, toItem: nextRow, attribute: .Top, multiplier: 1.0, constant: 0)
             }
