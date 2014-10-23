@@ -18,7 +18,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        self.view .addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("endEdit")))
+        self.view.backgroundColor = UIColor.darkGrayColor()
+        
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action:"endEdit"))
     }
 
     func endEdit(){
