@@ -15,12 +15,16 @@ protocol MainViewControllerDelegate{
 
 class ViewController: UIViewController {
 
+    var userPrefs : NSUserDefaults?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         self.view.backgroundColor = UIColor.darkGrayColor()
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action:"endEdit"))
+        
+        userPrefs = NSUserDefaults(suiteName: "jack.com.keyboard.prefs")
     }
 
     func endEdit(){

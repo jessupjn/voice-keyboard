@@ -19,7 +19,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
     @IBOutlet var nextKeyboardButton: UIButton!
 
     // options
-    let userDefaults : NSUserDefaults? = NSUserDefaults()//NSUserDefaults(suiteName: "")
+    let userDefaults : NSUserDefaults? = NSUserDefaults(suiteName: "jack.com.keyboard.prefs")
 
     var TRACKS_SPEED : Bool = true
     var BUTTON_SHAPE : Int = 1
