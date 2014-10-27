@@ -9,5 +9,6 @@
 #ifndef SafeDrive_Keyboard_SafeD_Bridging_Header_h
 #define SafeDrive_Keyboard_SafeD_Bridging_Header_h
 
+#import <Wit/Wit.h>
 
 #endif

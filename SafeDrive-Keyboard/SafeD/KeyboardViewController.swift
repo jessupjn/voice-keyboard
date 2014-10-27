@@ -14,7 +14,7 @@ enum ShiftStates : String {
     static let allValues = [None, Shift, Caps]
 }
 
-class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, UIAlertViewDelegate {
+class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, UIAlertViewDelegate, WitDelegate {
 
     @IBOutlet var nextKeyboardButton: UIButton!
 
@@ -54,6 +54,10 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
 
     override func viewWillAppear(animated: Bool) {
         self.view.backgroundColor = backGround
+        
+        Wit.sharedInstance().accessToken = "xxx"
+        Wit.sharedInstance().detectSpeechStop = .DetectSpeechStop
+        Wit.sharedInstance().delegate = self
         
 //        if isOpenAccessGranted() {
 //            setCustomOptions()

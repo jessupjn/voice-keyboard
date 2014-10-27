@@ -17,6 +17,10 @@
 		04B36FBC19EF0A3C00ADB773 /* SafeDrive_KeyboardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B36FBB19EF0A3C00ADB773 /* SafeDrive_KeyboardTests.swift */; };
 		04B36FCE19EF0ABA00ADB773 /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B36FCD19EF0ABA00ADB773 /* KeyboardViewController.swift */; };
 		04B36FD119EF0ABA00ADB773 /* SafeD.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 04B36FC919EF0ABA00ADB773 /* SafeD.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		04DE7A1C19FE7C230087FB4E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04DE7A1B19FE7C230087FB4E /* AVFoundation.framework */; };
+		04DE7A1E19FE7C2A0087FB4E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04DE7A1D19FE7C2A0087FB4E /* MobileCoreServices.framework */; };
+		04DE7A2019FE7C330087FB4E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04DE7A1F19FE7C330087FB4E /* SystemConfiguration.framework */; };
+		04DE7A2719FE7CEA0087FB4E /* Wit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04DE7A2619FE7CEA0087FB4E /* Wit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +78,10 @@
 		04B36FC919EF0ABA00ADB773 /* SafeD.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SafeD.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		04B36FCC19EF0ABA00ADB773 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		04B36FCD19EF0ABA00ADB773 /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
+		04DE7A1B19FE7C230087FB4E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		04DE7A1D19FE7C2A0087FB4E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		04DE7A1F19FE7C330087FB4E /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		04DE7A2619FE7CEA0087FB4E /* Wit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Wit.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +103,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04DE7A2719FE7CEA0087FB4E /* Wit.framework in Frameworks */,
+				04DE7A2019FE7C330087FB4E /* SystemConfiguration.framework in Frameworks */,
+				04DE7A1E19FE7C2A0087FB4E /* MobileCoreServices.framework in Frameworks */,
+				04DE7A1C19FE7C230087FB4E /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,6 +120,7 @@
 				04B36FB819EF0A3C00ADB773 /* SafeDrive-KeyboardTests */,
 				04B36FCA19EF0ABA00ADB773 /* SafeD */,
 				04B36FA119EF0A3C00ADB773 /* Products */,
+				04DE7A2319FE7C530087FB4E /* framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -177,6 +190,17 @@
 				04B36FCC19EF0ABA00ADB773 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		04DE7A2319FE7C530087FB4E /* framework */ = {
+			isa = PBXGroup;
+			children = (
+				04DE7A2619FE7CEA0087FB4E /* Wit.framework */,
+				04DE7A1F19FE7C330087FB4E /* SystemConfiguration.framework */,
+				04DE7A1D19FE7C2A0087FB4E /* MobileCoreServices.framework */,
+				04DE7A1B19FE7C230087FB4E /* AVFoundation.framework */,
+			);
+			name = framework;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -511,6 +535,11 @@
 		04B36FD519EF0ABA00ADB773 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/jack/Downloads/2.0.0,
+					"$(PROJECT_DIR)",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -526,6 +555,11 @@
 		04B36FD619EF0ABA00ADB773 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/jack/Downloads/2.0.0,
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = SafeD/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
