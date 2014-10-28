@@ -157,10 +157,10 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         
         addConstraintsToInputView(self.view, rowViews: [row1, row2, row3, row4])
         
-        var time = dispatch_time(DISPATCH_TIME_NOW, Int64(0.01 * Double(NSEC_PER_SEC)))
-        dispatch_after(time, dispatch_get_main_queue(), {
-            self.buttonBorders(self.view)
-        })
+//        var time = dispatch_time(DISPATCH_TIME_NOW, Int64(0.01 * Double(NSEC_PER_SEC)))
+//        dispatch_after(time, dispatch_get_main_queue(), {
+//            self.buttonBorders(self.view)
+//        })
         
     }
     
@@ -435,20 +435,41 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         var time = dispatch_time(DISPATCH_TIME_NOW, Int64(0.02 * Double(NSEC_PER_SEC)))
         
         if view.isKindOfClass(UIButton) && view.tag >= 1000 {
-            if BUTTON_SHAPE == 0  || BUTTON_SHAPE == 1 {
-//                if (view as UIButton).titleLabel?.text?.lowercaseString == "return" {
-//                    dispatch_after(time, dispatch_get_main_queue(), {
-//                        self.roundCorners(view as UIButton)
-//                    })
-//                }
-            self.roundCorners(view as UIButton)
+            
+            var sh : String = "BORDER_"
+            switch BUTTON_SHAPE {
+            case 0:
+                sh += "SH1"
+            case 1:
+                sh += "SH2"
+            case 2:
+                sh += "SQ"
+            default:
+                sh += "RD"
+            }
+            
+            (view as UIButton).contentMode = UIViewContentMode.ScaleToFill
+            if (view as UIButton).titleForState(.Normal) == nil {
+                (view as UIButton).setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
             } else {
-                view.layer.borderColor = foreGround.CGColor
-                view.layer.borderWidth = 1
-                if BUTTON_SHAPE == 2 {
-                    view.layer.cornerRadius = 5
+                if (view as UIButton).titleForState(.Normal)! == "123" {
+                    // 123 BUTTON
+                    (view as UIButton).setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+                } else if countElements((view as UIButton).titleForState(.Normal)!) == 1 {
+                    // NORMAL LETTER
+                    (view as UIButton).setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+                } else if (view as UIButton).titleForState(.Normal)! == "SH" || (view as UIButton).titleForState(.Normal)! == "⌫" {
+                    // SHIFT OR BACKSPACE
+                    (view as UIButton).setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+                } else {
+                    // SPACE OR RETURN
+                    (view as UIButton).setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
                 }
             }
+            
+            (view as UIButton).setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+//            self.roundCorners(view as UIButton)
+
             return
         }
         
@@ -490,6 +511,18 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
     
     func addIndividualButtonConstraints(buttons: [UIButton], mainView: UIView){
         
+        var sh : String = "BORDER_"
+        switch BUTTON_SHAPE {
+        case 0:
+            sh += "SH1"
+        case 1:
+            sh += "SH2"
+        case 2:
+            sh += "SQ"
+        default:
+            sh += "RD"
+        }
+        
         if(buttons.count >= 7)
         {
             var _topConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Top, relatedBy: .Equal, toItem: mainView, attribute: .Top, multiplier: 1.0, constant: 2)
@@ -504,6 +537,8 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             mainView.addConstraint(_middleConstraint)
             var widthConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: screenWidth/10.7)
             mainView.addConstraints([widthConstraint])
+            
+            buttons[4].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
             
             var l = 3, h = 5;
             let dist : CGFloat = UIScreen.mainScreen().bounds.width / 125
@@ -521,13 +556,15 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
                 var LdistRight = NSLayoutConstraint(item: buttons[l], attribute: .Right, relatedBy: .Equal, toItem: buttons[l+1], attribute: .Left, multiplier: 1.0, constant: -2)
                 var HdistLeft = NSLayoutConstraint(item: buttons[h], attribute: .Left, relatedBy: .Equal, toItem: buttons[h-1], attribute: .Right, multiplier: 1.0, constant: 2)
 
-                if(buttons[0].titleLabel?.text == "SH"){
-                    if(l == 0)
-                    {
-                        LwidthConstraint.constant = buttons[4].frame.width * 0.6
-                        HwidthConstraint.constant = buttons[4].frame.width * 0.6
-                    }
+                if buttons[l].titleLabel?.text == "SH" {
+                    LwidthConstraint.constant = buttons[4].frame.width * 0.6
+                    HwidthConstraint.constant = buttons[4].frame.width * 0.6
+                    
+                    sh += ""
                 }
+                
+                buttons[l].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+                buttons[h].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
                 
                 mainView.addConstraints([LwidthConstraint, HwidthConstraint])
                 mainView.addConstraints([LheightConstraint, HheightConstraint])
@@ -570,7 +607,10 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
                 mainView.addConstraints([LheightConstraint, HheightConstraint])
                 mainView.addConstraints([LwidthConstraint, HwidthConstraint])
                 mainView.addConstraints([LdistRight, HdistLeft])
-//                
+                
+                buttons[l].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+                buttons[h].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+//
 //                if buttons[l].tag == 1000 {
 //                    buttonWidth = buttons[l].frame.size.width
 //                }
@@ -587,7 +627,8 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
 
             mainView.addConstraints([_middleConstraint, _widthConstraint])
 
-            
+            buttons[3].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+
             var l = 2, h = 4;
             let dist : CGFloat = UIScreen.mainScreen().bounds.width / 125
             while l >= 0 {
@@ -608,7 +649,12 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
                     HdistLeft.constant += 4
                     LwidthConstraint.constant = screenWidth/10.7 + buttons[3].frame.width*0.6
                     HwidthConstraint.constant = screenWidth/10.7 + buttons[3].frame.width*0.6
+                    
+                    sh += ""
                 }
+                
+                buttons[l].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+                buttons[h].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
 
                 mainView.addConstraints([LwidthConstraint, HwidthConstraint])
                 mainView.addConstraints([LheightConstraint, HheightConstraint])
@@ -620,7 +666,6 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             }
             return
         }
-        
         else {
             var x :CGFloat = 0.0
             
@@ -632,7 +677,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             _topConstraint.priority = 1000
             _bottomConstraint.priority = 1000
             mainView.addConstraints([_leftConstraint, _bottomConstraint, _topConstraint, _widthConstraint])
-            
+            buttons[0].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
             x += (_leftConstraint.constant + _widthConstraint.constant)
             
             // NEXT BUTTON
@@ -642,7 +687,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             var leftConstraint = NSLayoutConstraint(item: buttons[1], attribute: .Left, relatedBy: .Equal, toItem: buttons[0], attribute: .Right, multiplier: 1.0, constant: 3)
             
             mainView.addConstraints([centerY, heightConstraint, widthConstraint, leftConstraint])
-            
+            buttons[1].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
             x += (leftConstraint.constant + _widthConstraint.constant)
 
             // MIC BUTTON
@@ -652,7 +697,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             leftConstraint = NSLayoutConstraint(item: buttons[2], attribute: .Left, relatedBy: .Equal, toItem: buttons[1], attribute: .Right, multiplier: 1.0, constant: 3)
             
             mainView.addConstraints([centerY, heightConstraint, widthConstraint, leftConstraint])
-            
+            buttons[2].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
             x += (leftConstraint.constant + _widthConstraint.constant)
 
             // SPACE BUTTON
@@ -662,7 +707,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             leftConstraint = NSLayoutConstraint(item: buttons[3], attribute: .Left, relatedBy: .Equal, toItem: buttons[2], attribute: .Right, multiplier: 1.0, constant: 3)
             
             mainView.addConstraints([centerY, heightConstraint, widthConstraint, leftConstraint])
-            
+            buttons[3].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
             x += (leftConstraint.constant + (_widthConstraint.constant * 2.65))
 
             // RETURN BUTTON
@@ -671,7 +716,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             leftConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Left, relatedBy: .Equal, toItem: buttons[3], attribute: .Right, multiplier: 1.0, constant: 3)
             var width = UIScreen.mainScreen().bounds.width - x - 8
             widthConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Width, relatedBy: .Equal, toItem:nil, attribute:.NotAnAttribute, multiplier: 1.0, constant: width )
-            
+            buttons[4].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
             mainView.addConstraints([centerY, heightConstraint, leftConstraint, widthConstraint])
         }
     }
