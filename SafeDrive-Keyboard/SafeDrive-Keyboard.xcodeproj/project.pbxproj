@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0482E2FB19F1ABF4003B5378 /* IMG.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0482E2FA19F1ABF4003B5378 /* IMG.xcassets */; };
-		0482E2FF19F55E72003B5378 /* DictationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0482E2FE19F55E72003B5378 /* DictationManager.swift */; };
 		04B36FA619EF0A3C00ADB773 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B36FA519EF0A3C00ADB773 /* AppDelegate.swift */; };
 		04B36FA819EF0A3C00ADB773 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B36FA719EF0A3C00ADB773 /* ViewController.swift */; };
 		04B36FAB19EF0A3C00ADB773 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04B36FA919EF0A3C00ADB773 /* Main.storyboard */; };
@@ -21,6 +20,8 @@
 		04DE7A1E19FE7C2A0087FB4E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04DE7A1D19FE7C2A0087FB4E /* MobileCoreServices.framework */; };
 		04DE7A2019FE7C330087FB4E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04DE7A1F19FE7C330087FB4E /* SystemConfiguration.framework */; };
 		04DE7A2719FE7CEA0087FB4E /* Wit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04DE7A2619FE7CEA0087FB4E /* Wit.framework */; };
+		04DE7A2A19FEB70A0087FB4E /* microphone.png in Resources */ = {isa = PBXBuildFile; fileRef = 04DE7A2919FEB70A0087FB4E /* microphone.png */; };
+		04DE7A2C19FEE39F0087FB4E /* ColorPickerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DE7A2B19FEE39F0087FB4E /* ColorPickerVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,7 +65,6 @@
 /* Begin PBXFileReference section */
 		043E709F19F9853A0052B55E /* SafeD-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SafeD-Bridging-Header.h"; sourceTree = "<group>"; };
 		0482E2FA19F1ABF4003B5378 /* IMG.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = IMG.xcassets; sourceTree = "<group>"; };
-		0482E2FE19F55E72003B5378 /* DictationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictationManager.swift; sourceTree = "<group>"; };
 		04B36FA019EF0A3C00ADB773 /* SafeDrive-Keyboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SafeDrive-Keyboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		04B36FA419EF0A3C00ADB773 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		04B36FA519EF0A3C00ADB773 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -82,6 +82,8 @@
 		04DE7A1D19FE7C2A0087FB4E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		04DE7A1F19FE7C330087FB4E /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		04DE7A2619FE7CEA0087FB4E /* Wit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Wit.framework; sourceTree = "<group>"; };
+		04DE7A2919FEB70A0087FB4E /* microphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = microphone.png; sourceTree = "<group>"; };
+		04DE7A2B19FEE39F0087FB4E /* ColorPickerVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +141,7 @@
 			children = (
 				04B36FA519EF0A3C00ADB773 /* AppDelegate.swift */,
 				04B36FA719EF0A3C00ADB773 /* ViewController.swift */,
+				04DE7A2B19FEE39F0087FB4E /* ColorPickerVC.swift */,
 				04B36FA919EF0A3C00ADB773 /* Main.storyboard */,
 				04B36FAC19EF0A3C00ADB773 /* Images.xcassets */,
 				04B36FAE19EF0A3C00ADB773 /* LaunchScreen.xib */,
@@ -177,7 +180,6 @@
 			isa = PBXGroup;
 			children = (
 				04B36FCD19EF0ABA00ADB773 /* KeyboardViewController.swift */,
-				0482E2FE19F55E72003B5378 /* DictationManager.swift */,
 				04B36FCB19EF0ABA00ADB773 /* Supporting Files */,
 				0482E2FA19F1ABF4003B5378 /* IMG.xcassets */,
 			);
@@ -187,6 +189,7 @@
 		04B36FCB19EF0ABA00ADB773 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				04DE7A2919FEB70A0087FB4E /* microphone.png */,
 				04B36FCC19EF0ABA00ADB773 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -325,6 +328,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0482E2FB19F1ABF4003B5378 /* IMG.xcassets in Resources */,
+				04DE7A2A19FEB70A0087FB4E /* microphone.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,6 +341,7 @@
 			files = (
 				04B36FA819EF0A3C00ADB773 /* ViewController.swift in Sources */,
 				04B36FA619EF0A3C00ADB773 /* AppDelegate.swift in Sources */,
+				04DE7A2C19FEE39F0087FB4E /* ColorPickerVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -353,7 +358,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				04B36FCE19EF0ABA00ADB773 /* KeyboardViewController.swift in Sources */,
-				0482E2FF19F55E72003B5378 /* DictationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

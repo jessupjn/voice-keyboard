@@ -13,7 +13,7 @@ protocol MainViewControllerDelegate{
     func ForegroundColorChanged();
 }
 
-class ViewController: UIViewController {
+class ViewController: UITableViewController {
 
     var userPrefs : NSUserDefaults?
     
@@ -25,6 +25,12 @@ class ViewController: UIViewController {
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action:"endEdit"))
         
         userPrefs = NSUserDefaults(suiteName: "jack.com.keyboard.prefs")
+        
+        if NSBundle.mainBundle().bundleIdentifier! == "com.JacksonJessup.SafeD-Free" {
+            
+        } else {
+            
+        }
     }
 
     func endEdit(){
@@ -35,7 +41,28 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
+    
+    //
+    //                UITABLEVIEW DELEGATE AND DATASOURCE METHODS
+    //
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 4;
+    }
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        if indexPath.row == 0 {
+            
+        } else if indexPath.row == 1 {
+            
+        } else if indexPath.row == 2 {
+            
+        } else if indexPath.row == 3 {
+            
+        } else if indexPath.row == 4 {
+            
+        }
+    }
 
 }
 
