@@ -120,12 +120,16 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         } else {
             fr = CGRect(x: 0, y: 0, width: UIScreen.mainScreen().bounds.width, height: UIScreen.mainScreen().bounds.height/2)
         }
-        var bgImg = UIImageView(frame: fr)
-        bgImg.image = UIImage(named: "bg")
+        let bgImg = UIImageView(frame: fr)
+        bgImg.image = UIImage(named: "THEME_MAVERICK")
         bgImg.tag = 69
         self.view.addSubview(bgImg)
+        var v = UIView(frame: bgImg.frame)
+        v.center = bgImg.center
+        v.backgroundColor = UIColor(white: 0.0, alpha: 0.2)
+        bgImg.addSubview(v)
         
-        var blurV = giveBlurView(fr, style: BLUR_STYLE)
+        let blurV = giveBlurView(fr, style: BLUR_STYLE)
         blurV.tag = 69
         self.view.addSubview(blurV)
         
@@ -140,29 +144,32 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         screenWidth = UIScreen.mainScreen().bounds.size.width
         buttonWidth = screenWidth / 11
         
-        var row1 = createRow(buttonTitles1, width: screenWidth)
-        var row2 = createRow(buttonTitles2, width: screenWidth-buttonWidth)
-        var row3 = createRow(buttonTitles3, width: screenWidth-buttonWidth)
-        var row4 = createRow(buttonTitles4, width: screenWidth)
-        
-        self.view.addSubview(row1)
-        self.view.addSubview(row2)
-        self.view.addSubview(row3)
-        self.view.addSubview(row4)
+        var row1 = createRow((blurV as UIVisualEffectView), titles: buttonTitles1, width: screenWidth)
+        var row2 = createRow((blurV as UIVisualEffectView), titles: buttonTitles2, width: screenWidth-buttonWidth)
+        var row3 = createRow((blurV as UIVisualEffectView), titles: buttonTitles3, width: screenWidth-buttonWidth)
+        var row4 = createRow((blurV as UIVisualEffectView), titles: buttonTitles4, width: screenWidth)
+        (blurV as UIVisualEffectView).contentView.addSubview(row1)
+        (blurV as UIVisualEffectView).contentView.addSubview(row2)
+        (blurV as UIVisualEffectView).contentView.addSubview(row3)
+        (blurV as UIVisualEffectView).contentView.addSubview(row4)
         
         row1.setTranslatesAutoresizingMaskIntoConstraints(false)
         row2.setTranslatesAutoresizingMaskIntoConstraints(false)
         row3.setTranslatesAutoresizingMaskIntoConstraints(false)
         row4.setTranslatesAutoresizingMaskIntoConstraints(false)
         
-        addConstraintsToInputView(self.view, rowViews: [row1, row2, row3, row4])
+        addConstraintsToInputView(blurV, rowViews: [row1, row2, row3, row4])
         
-//        var time = dispatch_time(DISPATCH_TIME_NOW, Int64(0.01 * Double(NSEC_PER_SEC)))
-//        dispatch_after(time, dispatch_get_main_queue(), {
-//            self.buttonBorders(self.view)
-//        })
-        
+        row1.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pr1"))
+        row2.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pr2"))
+        row3.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pr3"))
+        row4.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pr4"))
     }
+    
+    func pr1(){ println("1") }
+    func pr2(){ println("2") }
+    func pr3(){ println("3") }
+    func pr4(){ println("4") }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -217,25 +224,29 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
 
     }
     
-    
-    
-    
-    
     //
     //                      MY CUSTOM FUNCTIONS
     //
-    func createRow(titles:[NSString], width:CGFloat)->UIView
+    private func vibrancyEffectView(forBlurEffectView blurEffectView:UIVisualEffectView) -> UIVisualEffectView {
+        let vibrancy = UIVibrancyEffect(forBlurEffect: UIBlurEffect(style: .Dark))
+        let vibrancyView = UIVisualEffectView(effect: vibrancy)
+        vibrancyView.frame = blurEffectView.bounds
+        vibrancyView.autoresizingMask = .FlexibleWidth | .FlexibleHeight
+        return vibrancyView
+    }
+    func createRow(blurView: UIView, titles:[NSString], width:CGFloat)->UIView
     {
+
+        let keyboardRowView = vibrancyEffectView(forBlurEffectView: (blurView as UIVisualEffectView))
+
         var buttons = [UIButton]()
-        var keyboardRowView = UIView(frame: CGRectMake(0,0, width, 200))
         for buttonTitle in titles{
             let button = createButtonWithTitle(buttonTitle)
             buttons.append(button)
-            keyboardRowView.addSubview(button)
+            keyboardRowView.contentView.addSubview(button)
         }
         
-        addIndividualButtonConstraints(buttons, mainView: keyboardRowView)
-        
+        addIndividualButtonConstraints(buttons, mainView: keyboardRowView.contentView)
         return keyboardRowView
     }
     
@@ -244,15 +255,15 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         button.frame = CGRectMake(0, 0, buttonWidth, 35)
         button.sizeToFit()
 
-        button.titleLabel!.font = UIFont.systemFontOfSize(18)
+        button.titleLabel!.font = UIFont.boldSystemFontOfSize(18)
         button.setTranslatesAutoresizingMaskIntoConstraints(false)
-        button.backgroundColor = .clearColor()
-        button.setTitleColor(foreGround, forState: .Normal)
+//        button.backgroundColor = .clearColor()
+//        button.setTitleColor(foreGround, forState: .Normal)
         button.tag = tagNum++
         button.clipsToBounds = true
         
         if title == "MIC" || title == "NEXT" {
-            button.setBackgroundImage(UIImage(named:title)?.imageWithRenderingMode(.AlwaysTemplate), forState:.Normal)
+            button.setImage(UIImage(named:title), forState:.Normal)
             button.contentMode = .ScaleAspectFit
             button.setTitle(title, forState:.Reserved)
 
@@ -410,7 +421,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         var str : NSString = proxy.documentContextBeforeInput
         if proxy.autocapitalizationType? == .None {
             return false
-        } else if (/*proxy.autocapitalizationType? == .AllCharacters ||*/ str.length == 0) {
+        } else if ( /*proxy.autocapitalizationType? == .AllCharacters ||*/ str.length == 0) {
             return true
         }
 
@@ -427,57 +438,10 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         }
         return false
     }
+    
     //
     //                      CREATE BUTTON SHAPE
     //
-    func buttonBorders(view: UIView)
-    {
-        var time = dispatch_time(DISPATCH_TIME_NOW, Int64(0.02 * Double(NSEC_PER_SEC)))
-        
-        if view.isKindOfClass(UIButton) && view.tag >= 1000 {
-            
-            var sh : String = "BORDER_"
-            switch BUTTON_SHAPE {
-            case 0:
-                sh += "SH1"
-            case 1:
-                sh += "SH2"
-            case 2:
-                sh += "SQ"
-            default:
-                sh += "RD"
-            }
-            
-            (view as UIButton).contentMode = UIViewContentMode.ScaleToFill
-            if (view as UIButton).titleForState(.Normal) == nil {
-                (view as UIButton).setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-            } else {
-                if (view as UIButton).titleForState(.Normal)! == "123" {
-                    // 123 BUTTON
-                    (view as UIButton).setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-                } else if countElements((view as UIButton).titleForState(.Normal)!) == 1 {
-                    // NORMAL LETTER
-                    (view as UIButton).setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-                } else if (view as UIButton).titleForState(.Normal)! == "SH" || (view as UIButton).titleForState(.Normal)! == "⌫" {
-                    // SHIFT OR BACKSPACE
-                    (view as UIButton).setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-                } else {
-                    // SPACE OR RETURN
-                    (view as UIButton).setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-                }
-            }
-            
-            (view as UIButton).setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-//            self.roundCorners(view as UIButton)
-
-            return
-        }
-        
-        for viw in view.subviews {
-            buttonBorders(viw as UIView)
-        }
-    }
-    
     func roundCorners(button: UIView)
     {
         var bounds : CGRect = button.frame
@@ -509,6 +473,9 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         button.layer.addSublayer(pathLayer)
     }
     
+    //
+    //   KEYBOARD CONSTRAINTS
+    //
     func addIndividualButtonConstraints(buttons: [UIButton], mainView: UIView){
         
         var sh : String = "BORDER_"
@@ -739,12 +706,6 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
                     HC.constant = UIScreen.mainScreen().bounds.height/12
                 } else {
                     HC.constant = UIScreen.mainScreen().bounds.height/8
-
-//                    self.view.addConstraint(NSLayoutConstraint(
-//                        item:rowView, attribute:NSLayoutAttribute.Height,
-//                        relatedBy:NSLayoutRelation.Equal,
-//                        toItem:nil, attribute:NSLayoutAttribute.NotAnAttribute,
-//                        multiplier:0, constant:UIScreen.mainScreen().bounds.height/8))
                 }
                 HC.priority = 1000
                 self.view.addConstraint(HC)
@@ -774,17 +735,21 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         
     }
     
+    //
+    //              VIEW WILL ROTATE - DEVICE ROTATION
+    //
     override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
         for view in self.view.subviews
         {
-            if view.tag != 69 {
-                view.removeFromSuperview()
+            if toInterfaceOrientation == .LandscapeLeft || toInterfaceOrientation == .LandscapeRight {
+                (view as UIView).frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.width,  UIScreen.mainScreen().bounds.height/1.5)
             } else {
-                if toInterfaceOrientation == .LandscapeLeft || toInterfaceOrientation == .LandscapeRight {
-                    (view as UIView).frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.width,  UIScreen.mainScreen().bounds.height/1.5)
-                } else {
-                    (view as UIView).frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.width,  UIScreen.mainScreen().bounds.height/3)
-                }
+                (view as UIView).frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.width,  UIScreen.mainScreen().bounds.height/3)
+            }
+            
+            for viw in view.subviews
+            {
+                viw.removeFromSuperview()
             }
         }
     }
@@ -792,6 +757,9 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         buildKeyboard()
     }
     
+    //
+    //              CREATE A BLUR VIEW
+    //
     func giveBlurView(frame: CGRect, style : UIBlurEffectStyle) -> UIView {
         //blur view
         var blur = UIBlurEffect(style:style)
@@ -808,6 +776,10 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         return blurView
     }
     
+    
+    //
+    //              SHOW/HIDE THE MICROPHONE BUTTON
+    //
     func showMic()
     {
         MIC_OPEN = true
@@ -889,6 +861,10 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
     
     }
     
+    
+    
+    
+    // TODO TODO TODO
     func isOpenAccessGranted() -> Bool {
         let fm = NSFileManager.defaultManager()
         let containerPath = fm.containerURLForSecurityApplicationGroupIdentifier(
