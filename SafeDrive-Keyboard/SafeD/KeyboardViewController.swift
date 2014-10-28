@@ -62,7 +62,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         Wit.sharedInstance().delegate = self
         
 //        if isOpenAccessGranted() {
-//            setCustomOptions()
+            setCustomOptions()
 //        }
     }
     

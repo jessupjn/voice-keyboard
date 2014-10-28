@@ -16,6 +16,18 @@ protocol MainViewControllerDelegate{
 class ViewController: UITableViewController {
 
     var userPrefs : NSUserDefaults?
+
+    @IBOutlet var TrackSpeed : UISwitch!
+    @IBAction func TrackSpeedToggle(sender : UISwitch){
+        userPrefs?.setBool(sender.on, forKey: "TRACKS_SPEED")
+        userPrefs?.synchronize()
+    }
+    
+    @IBOutlet var ButtonShape : UISegmentedControl!
+    @IBAction func ButtonShapeToggle(sender : UISegmentedControl){
+        userPrefs?.setInteger(sender.selectedSegmentIndex, forKey: "BUTTON_SHAPE")
+        userPrefs?.synchronize()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

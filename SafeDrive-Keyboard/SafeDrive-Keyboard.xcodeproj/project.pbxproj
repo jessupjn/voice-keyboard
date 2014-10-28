@@ -78,6 +78,7 @@
 		04B36FC919EF0ABA00ADB773 /* SafeD.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SafeD.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		04B36FCC19EF0ABA00ADB773 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		04B36FCD19EF0ABA00ADB773 /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
+		04C8A9FB1A00373100B79EC7 /* SafeDrive-Keyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "SafeDrive-Keyboard.entitlements"; sourceTree = "<group>"; };
 		04DE7A1B19FE7C230087FB4E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		04DE7A1D19FE7C2A0087FB4E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		04DE7A1F19FE7C330087FB4E /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -139,6 +140,7 @@
 		04B36FA219EF0A3C00ADB773 /* SafeDrive-Keyboard */ = {
 			isa = PBXGroup;
 			children = (
+				04C8A9FB1A00373100B79EC7 /* SafeDrive-Keyboard.entitlements */,
 				04B36FA519EF0A3C00ADB773 /* AppDelegate.swift */,
 				04B36FA719EF0A3C00ADB773 /* ViewController.swift */,
 				04DE7A2B19FEE39F0087FB4E /* ColorPickerVC.swift */,
@@ -275,6 +277,12 @@
 				TargetAttributes = {
 					04B36F9F19EF0A3C00ADB773 = {
 						CreatedOnToolsVersion = 6.0.1;
+						DevelopmentTeam = D4GHMEPT8Q;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 0;
+							};
+						};
 					};
 					04B36FB419EF0A3C00ADB773 = {
 						CreatedOnToolsVersion = 6.0.1;
@@ -484,6 +492,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "SafeDrive-Keyboard/SafeDrive-Keyboard.entitlements";
 				INFOPLIST_FILE = "SafeDrive-Keyboard/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -495,6 +504,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "SafeDrive-Keyboard/SafeDrive-Keyboard.entitlements";
 				INFOPLIST_FILE = "SafeDrive-Keyboard/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";

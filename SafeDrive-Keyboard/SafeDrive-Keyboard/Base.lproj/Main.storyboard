@@ -66,6 +66,9 @@
                                                         <segment title="Custom 1"/>
                                                         <segment title="Custom 2"/>
                                                     </segments>
+                                                    <connections>
+                                                        <action selector="ButtonShapeToggle:" destination="SUS-hD-g6f" eventType="valueChanged" id="91E-m1-yfT"/>
+                                                    </connections>
                                                 </segmentedControl>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Button Shape:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bNr-cm-fFb">
                                                     <rect key="frame" x="8" y="12" width="94" height="21"/>
@@ -106,6 +109,9 @@
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="p0u-gu-lmp">
                                                     <rect key="frame" x="298" y="7" width="51" height="31"/>
+                                                    <connections>
+                                                        <action selector="TrackSpeedToggle:" destination="SUS-hD-g6f" eventType="valueChanged" id="Ac8-07-jLO"/>
+                                                    </connections>
                                                 </switch>
                                             </subviews>
                                             <constraints>
@@ -185,6 +191,10 @@
                         </connections>
                     </tableView>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+                    <connections>
+                        <outlet property="ButtonShape" destination="2rV-M0-nmy" id="Xbb-xm-ymI"/>
+                        <outlet property="TrackSpeed" destination="p0u-gu-lmp" id="ZTc-Zb-71l"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lrV-za-ysU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
