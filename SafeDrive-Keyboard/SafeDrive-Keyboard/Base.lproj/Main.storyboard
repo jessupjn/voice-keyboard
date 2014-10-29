@@ -14,19 +14,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="WR2-l0-KBy">
-                            <rect key="frame" x="0.0" y="0.0" width="375" height="185"/>
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="250"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OkN-Nf-bf4">
-                                    <rect key="frame" x="63" y="30" width="250" height="125"/>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <constraints>
-                                        <constraint firstAttribute="width" constant="250" id="IF1-Rx-CAc"/>
-                                        <constraint firstAttribute="height" constant="125" id="Kef-td-Fl3"/>
-                                    </constraints>
-                                </view>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Preview" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q51-Ih-zZJ">
-                                    <rect key="frame" x="158" y="156" width="61" height="21"/>
+                                    <rect key="frame" x="158" y="221" width="61" height="21"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="61" id="cD1-wk-7Rj"/>
                                         <constraint firstAttribute="height" constant="21" id="v6d-xW-9KI"/>
@@ -35,18 +27,26 @@
                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Ecb-R6-Zgh">
-                                    <rect key="frame" x="31" y="118" width="315" height="30"/>
+                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Ecb-R6-Zgh">
+                                    <rect key="frame" x="31" y="147" width="315" height="30"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <textInputTraits key="textInputTraits"/>
                                 </textField>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OkN-Nf-bf4">
+                                    <rect key="frame" x="21" y="31" width="335" height="188"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="335" id="IF1-Rx-CAc"/>
+                                        <constraint firstAttribute="height" constant="188" id="Kef-td-Fl3"/>
+                                    </constraints>
+                                </view>
                             </subviews>
                             <color key="backgroundColor" red="0.94117647059999998" green="0.94117647059999998" blue="0.94117647059999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="bottom" secondItem="q51-Ih-zZJ" secondAttribute="bottom" constant="8" id="DWE-Xz-r5m"/>
                                 <constraint firstAttribute="centerX" secondItem="q51-Ih-zZJ" secondAttribute="centerX" constant="-0.5" id="J6q-sX-2Mi"/>
                                 <constraint firstAttribute="centerY" secondItem="OkN-Nf-bf4" secondAttribute="centerY" id="M8E-1F-hqB"/>
-                                <constraint firstAttribute="centerX" secondItem="OkN-Nf-bf4" secondAttribute="centerX" id="Z2m-lq-XzB"/>
+                                <constraint firstAttribute="centerX" secondItem="OkN-Nf-bf4" secondAttribute="centerX" constant="-1" id="Z2m-lq-XzB"/>
                             </constraints>
                         </view>
                         <sections>
@@ -194,6 +194,7 @@
                     <connections>
                         <outlet property="ButtonShape" destination="2rV-M0-nmy" id="Xbb-xm-ymI"/>
                         <outlet property="TrackSpeed" destination="p0u-gu-lmp" id="ZTc-Zb-71l"/>
+                        <outlet property="keyboardPreview" destination="OkN-Nf-bf4" id="zOH-0w-MuL"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lrV-za-ysU" userLabel="First Responder" sceneMemberID="firstResponder"/>

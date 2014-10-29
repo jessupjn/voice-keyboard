@@ -17,26 +17,45 @@ class ViewController: UITableViewController {
 
     var userPrefs : NSUserDefaults?
 
+    @IBOutlet var keyboardPreview : UIView!
+    var preview : KeyboardPreview?
+    
     @IBOutlet var TrackSpeed : UISwitch!
     @IBAction func TrackSpeedToggle(sender : UISwitch){
         userPrefs?.setBool(sender.on, forKey: "TRACKS_SPEED")
         userPrefs?.synchronize()
+        buildPreview()
     }
     
     @IBOutlet var ButtonShape : UISegmentedControl!
     @IBAction func ButtonShapeToggle(sender : UISegmentedControl){
         userPrefs?.setInteger(sender.selectedSegmentIndex, forKey: "BUTTON_SHAPE")
         userPrefs?.synchronize()
+        buildPreview()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        self.view.backgroundColor = UIColor.darkGrayColor()
+        
+        preview = KeyboardPreview(frame: CGRect(x: 0, y: 0, width: keyboardPreview.frame.width, height: keyboardPreview.frame.height))
+        keyboardPreview.addSubview(preview!)
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action:"endEdit"))
         
         userPrefs = NSUserDefaults(suiteName: "jack.com.keyboard.prefs")
+        if userPrefs!.objectForKey("TRACKS_SPEED") == nil {
+            userPrefs!.setBool(false, forKey: "TRACKS_SPEED")
+            userPrefs!.setObject("THEME_YOSEMITE", forKey: "THEME")
+            userPrefs!.setInteger(2, forKey: "BUTTON_SHAPE")
+            userPrefs!.synchronize()
+            
+            ButtonShape.selectedSegmentIndex = userPrefs!.integerForKey("BUTTON_SHAPE")
+            TrackSpeed.setOn( userPrefs!.boolForKey("TRACKS_SPEED"), animated: false)
+            
+        }
+        
+        buildPreview()
         
         if NSBundle.mainBundle().bundleIdentifier! == "com.JacksonJessup.SafeD-Free" {
             
@@ -54,6 +73,11 @@ class ViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    private func buildPreview(){
+        var theme : String = userPrefs!.stringForKey("THEME")!
+        var btnShape = userPrefs?.integerForKey("BUTTON_SHAPE")
+        preview!.buildWith(.Dark, theme: theme, buttonShape: btnShape!)
+    }
     
     //
     //                UITABLEVIEW DELEGATE AND DATASOURCE METHODS

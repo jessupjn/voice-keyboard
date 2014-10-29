@@ -22,12 +22,13 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
     let userDefaults : NSUserDefaults? = NSUserDefaults(suiteName: "jack.com.keyboard.prefs")
 
     var TRACKS_SPEED : Bool = true
-    var BUTTON_SHAPE : Int = 1
+    var BUTTON_SHAPE : Int = 2
+    var THEME_STYLE : String = "THEME_MOUNTAINLION"
+    var BLUR_STYLE : UIBlurEffectStyle = .Light
     var SPEED_LIMIT : Int = 600
     var foreGround : UIColor = UIColor(red:202/255.0, green:31/255.0, blue:0/255.0, alpha: 1)
     var backGround : UIColor = UIColor.lightTextColor()
     var MIC_OPEN : Bool = false
-    var BLUR_STYLE : UIBlurEffectStyle = .Light
     
     // variables
     let backgroundView : UIView = UIView()
@@ -55,7 +56,6 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
 
     override func viewWillAppear(animated: Bool) {
         self.view.backgroundColor = .clearColor() //backGround
-        self.view.backgroundColor = UIColor(red: 195/255.0, green: 220/255.0, blue: 240/255.0, alpha: 1) //backGround
         
         Wit.sharedInstance().accessToken = "XNG5DZHE2AVVOQNZ42H47PNUMEX4I7UP"
         Wit.sharedInstance().detectSpeechStop = .DetectSpeechStop
@@ -121,55 +121,38 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             fr = CGRect(x: 0, y: 0, width: UIScreen.mainScreen().bounds.width, height: UIScreen.mainScreen().bounds.height/2)
         }
         let bgImg = UIImageView(frame: fr)
-        bgImg.image = UIImage(named: "THEME_MAVERICK")
+        bgImg.image = UIImage(named: "THEME_MOUNTAINLION")
         bgImg.tag = 69
         self.view.addSubview(bgImg)
-        var v = UIView(frame: bgImg.frame)
-        v.center = bgImg.center
-        v.backgroundColor = UIColor(white: 0.0, alpha: 0.2)
-        bgImg.addSubview(v)
         
-        let blurV = giveBlurView(fr, style: BLUR_STYLE)
-        blurV.tag = 69
-        self.view.addSubview(blurV)
-        
+        let blur = UIBlurEffect(style: BLUR_STYLE)
+        let blurView = UIVisualEffectView(effect: blur)
+        blurView.frame = CGRect(x: 0, y: 0, width: bgImg.frame.width, height: bgImg.frame.height)
+        self.view.addSubview(blurView)
+
         tagNum = 1000
-        
+
         // BUILDING VARIOUS BUTTONS USED FOR THE KEYBOARD
         let buttonTitles1 = getRow(0)
         let buttonTitles2 = getRow(1)
         let buttonTitles3 = getRow(2)
         let buttonTitles4 = getRow(3)
-        
+
         screenWidth = UIScreen.mainScreen().bounds.size.width
         buttonWidth = screenWidth / 11
         
-        var row1 = createRow((blurV as UIVisualEffectView), titles: buttonTitles1, width: screenWidth)
-        var row2 = createRow((blurV as UIVisualEffectView), titles: buttonTitles2, width: screenWidth-buttonWidth)
-        var row3 = createRow((blurV as UIVisualEffectView), titles: buttonTitles3, width: screenWidth-buttonWidth)
-        var row4 = createRow((blurV as UIVisualEffectView), titles: buttonTitles4, width: screenWidth)
-        (blurV as UIVisualEffectView).contentView.addSubview(row1)
-        (blurV as UIVisualEffectView).contentView.addSubview(row2)
-        (blurV as UIVisualEffectView).contentView.addSubview(row3)
-        (blurV as UIVisualEffectView).contentView.addSubview(row4)
+        var row1 = createRow(blurView, titles: buttonTitles1, width: screenWidth)
+        var row2 = createRow(blurView, titles: buttonTitles2, width: screenWidth-buttonWidth)
+        var row3 = createRow(blurView, titles: buttonTitles3, width: screenWidth-buttonWidth)
+        var row4 = createRow(blurView, titles: buttonTitles4, width: screenWidth)
         
         row1.setTranslatesAutoresizingMaskIntoConstraints(false)
         row2.setTranslatesAutoresizingMaskIntoConstraints(false)
         row3.setTranslatesAutoresizingMaskIntoConstraints(false)
         row4.setTranslatesAutoresizingMaskIntoConstraints(false)
-        
-        addConstraintsToInputView(blurV, rowViews: [row1, row2, row3, row4])
-        
-        row1.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pr1"))
-        row2.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pr2"))
-        row3.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pr3"))
-        row4.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pr4"))
+        addConstraintsToInputView(blurView, rowViews: [row1, row2, row3, row4])
+
     }
-    
-    func pr1(){ println("1") }
-    func pr2(){ println("2") }
-    func pr3(){ println("3") }
-    func pr4(){ println("4") }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -181,7 +164,6 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         
         buildKeyboard()
 
-//        var timer = NSTimer.scheduledTimerWithTimeInterval(0.4, target: self, selector: Selector("checkLoc"), userInfo: nil, repeats: true)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -227,78 +209,97 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
     //
     //                      MY CUSTOM FUNCTIONS
     //
-    private func vibrancyEffectView(forBlurEffectView blurEffectView:UIVisualEffectView) -> UIVisualEffectView {
-        let vibrancy = UIVibrancyEffect(forBlurEffect: UIBlurEffect(style: .Dark))
-        let vibrancyView = UIVisualEffectView(effect: vibrancy)
-        vibrancyView.frame = blurEffectView.bounds
-        vibrancyView.autoresizingMask = .FlexibleWidth | .FlexibleHeight
-        return vibrancyView
-    }
-    func createRow(blurView: UIView, titles:[NSString], width:CGFloat)->UIView
+    func createRow(blurView: UIVisualEffectView, titles:[NSString], width:CGFloat)->UIView
     {
 
-        let keyboardRowView = vibrancyEffectView(forBlurEffectView: (blurView as UIVisualEffectView))
-
+        let vibrancy = UIVibrancyEffect(forBlurEffect: blurView.effect as UIBlurEffect)
+        let keyboardRowView = UIVisualEffectView(effect: vibrancy)
+        keyboardRowView.frame = blurView.bounds
+        keyboardRowView.autoresizingMask = .FlexibleWidth | .FlexibleHeight
+        blurView.contentView.addSubview(keyboardRowView)
+        
         var buttons = [UIButton]()
         for buttonTitle in titles{
             let button = createButtonWithTitle(buttonTitle)
+            button.setTranslatesAutoresizingMaskIntoConstraints(false)
             buttons.append(button)
             keyboardRowView.contentView.addSubview(button)
         }
-        
+        keyboardRowView.setTranslatesAutoresizingMaskIntoConstraints(false)
+//        keyboardRowView.contentView.setTranslatesAutoresizingMaskIntoConstraints(false)
         addIndividualButtonConstraints(buttons, mainView: keyboardRowView.contentView)
         return keyboardRowView
     }
     
+    private func tintedIconButton(iconNamed iconName: String) -> UIButton {
+        let iconImage = UIImage(named: iconName)!.imageWithRenderingMode(.AlwaysTemplate)
+        let borderImage = UIImage(named: "BORDER_RD")!.imageWithRenderingMode(.AlwaysTemplate)
+        
+        let button = UIButton(frame: CGRect(origin: CGPointZero, size: borderImage.size))
+        button.setBackgroundImage(borderImage, forState: .Normal)
+        button.setImage(iconImage, forState: .Normal)
+        return button
+    }
     func createButtonWithTitle(title: String) -> UIButton {
-        let button = UIButton.buttonWithType(.System) as UIButton
+        var sh : String = "BORDER_"
+        switch BUTTON_SHAPE {
+        case 0:
+            sh += "SH1"
+        case 1:
+            sh += "SH2"
+        case 2:
+            sh += "SQ"
+        default:
+            sh += "RD"
+        }
+        
+        let borderImage = UIImage(named: sh)!.imageWithRenderingMode(.AlwaysTemplate)
+        let button = UIButton(frame: CGRect(origin: CGPointZero, size: borderImage.size))
         button.frame = CGRectMake(0, 0, buttonWidth, 35)
         button.sizeToFit()
-
         button.titleLabel!.font = UIFont.boldSystemFontOfSize(18)
-        button.setTranslatesAutoresizingMaskIntoConstraints(false)
-//        button.backgroundColor = .clearColor()
-//        button.setTitleColor(foreGround, forState: .Normal)
         button.tag = tagNum++
         button.clipsToBounds = true
         
+        button.setBackgroundImage(borderImage, forState: .Normal)
         if title == "MIC" || title == "NEXT" {
-            button.setImage(UIImage(named:title), forState:.Normal)
+            let iconImage = UIImage(named: title)!.imageWithRenderingMode(.AlwaysTemplate)
+            button.setImage(iconImage, forState:.Normal)
             button.contentMode = .ScaleAspectFit
             button.setTitle(title, forState:.Reserved)
 
         } else {
-            button.setTitle(title, forState: .Normal)
             if title.uppercaseString == "SH" {
                 shiftButton = button
+                button.setTitle(title, forState:.Reserved)
+                var img : UIImage
+                switch shiftState {
+                case .Caps:
+                    img = UIImage(named: "SHIFT_CAPS")!.imageWithRenderingMode(.AlwaysTemplate)
+                case .Shift:
+                    img = UIImage(named: "SHIFT_SHIFT")!.imageWithRenderingMode(.AlwaysTemplate)
+                default:
+                    img = UIImage(named: "SHIFT_NONE")!.imageWithRenderingMode(.AlwaysTemplate)
+                }
+                shiftButton?.setImage(img, forState: .Normal)
+
+            } else {
+                button.setTitle(title, forState: .Normal)
             }
         }
         
         if countElements(title) > 2 {
             button.titleLabel!.font = UIFont.systemFontOfSize(15)
         }
-        
-        button.contentVerticalAlignment = .Center
-        button.contentHorizontalAlignment = .Center
-        button.setTitleColor(backGround, forState: UIControlState.Highlighted)
-        button.tintColor = foreGround
+
         button.addTarget(self, action: "didTapButton:", forControlEvents: .TouchDown)
         button.addTarget(self, action: "submitString:", forControlEvents: .TouchUpInside)
         
         return button
     }
     
-    func buttonHighlight(sender:AnyObject?){
-//        var this : Bool = sender as Bool
-//
-    }
-    
     var typedString = ""
     func submitString(sender: AnyObject?){
-        var viw = sender!.viewWithTag(43)?
-        if viw != nil {
-           viw?.removeFromSuperview()
-        }
         
         if countElements(typedString) > 0 {
             var proxy = textDocumentProxy as UITextDocumentProxy
@@ -311,13 +312,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
     func didTapButton(sender: AnyObject?) {
         
         submitString(sender)
-        
-        var rect = CGRectMake(3, 3, sender!.frame.width-6, sender!.frame.height-6)
-        var viw = UIView(frame: rect)
-        viw.backgroundColor = UIColor(white: 0, alpha: 0.2)
-        viw.tag = 43
-        sender?.addSubview(viw)
-        
+
         let button = sender as UIButton
         var title : String? = button.titleForState( .Normal )?
         var proxy = textDocumentProxy as UITextDocumentProxy
@@ -331,12 +326,16 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
                 proxy.deleteBackward()
             case "ABC":
                 shiftState = .None
+                shiftButton?.setImage(UIImage(named: "SHIFT_NONE")!.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
                 buildKeyboard()
             case "#+=":
                 shiftState = .Number2
+                shiftButton?.setImage(UIImage(named: "SHIFT_NUMBER2")!.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+
                 buildKeyboard()
             case "123":
                 shiftState = .Number1
+                shiftButton?.setImage(UIImage(named: "SHIFT_NUMBER1")!.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
                 buildKeyboard()
             case "MIC":
                 showMic()
@@ -346,21 +345,21 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             case "SH":
                 if shiftState == .None {
                     shiftState = .Shift
+                    shiftButton?.setImage(UIImage(named: "SHIFT_SHIFT")!.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
                     goToCaps = true
                     dispatch_after( dispatch_time(DISPATCH_TIME_NOW, Int64(0.17 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), {
                         self.goToCaps = false
                     })
-                    button.setTitleColor(UIColor.blueColor(), forState:.Normal)
                 } else if shiftState == .Caps {
                     shiftState = .None
-                    button.setTitleColor( UIColor.blackColor(), forState: .Normal)
+                    shiftButton?.setImage(UIImage(named: "SHIFT_NONE")!.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
                 } else {
                     if goToCaps {
                         shiftState = .Caps
-                        button.setTitleColor(UIColor.redColor(), forState:.Normal)
+                        shiftButton?.setImage(UIImage(named: "SHIFT_CAPS")!.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
                     } else {
                         shiftState = .None
-                        button.setTitleColor(UIColor.blackColor(), forState:.Normal)
+                        shiftButton?.setImage(UIImage(named: "SHIFT_NONE")!.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
                     }
                 }
             case "NEXT":
@@ -385,6 +384,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
                 
                 // keyboard back to regular
                 shiftState = .None
+                shiftButton?.setImage(UIImage(named: "SHIFT_NONE")!.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
                 buildKeyboard()
                 
                 dispatch_after( dispatch_time(DISPATCH_TIME_NOW, Int64(0.22 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), {
@@ -403,7 +403,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
                 } else if shiftState == ShiftStates.Shift {
                     typedString += upperCase[button.tag-1000]
                     shiftState = ShiftStates.None
-                    button.setTitleColor( UIColor.blackColor(), forState: .Normal)
+                    shiftButton?.setImage(UIImage(named: "SHIFT_NONE")!.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
                 } else if shiftState == ShiftStates.Caps {
                     typedString += upperCase[button.tag-1000]
                 } else if shiftState == ShiftStates.Number1 {
@@ -439,57 +439,12 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         return false
     }
     
-    //
-    //                      CREATE BUTTON SHAPE
-    //
-    func roundCorners(button: UIView)
-    {
-        var bounds : CGRect = button.frame
-        
-        var bezierPath : UIBezierPath = UIBezierPath()
-        bezierPath.lineJoinStyle = kCGLineJoinRound
-        bezierPath.moveToPoint( CGPointMake(2,bounds.height/2) )
-        bezierPath.addLineToPoint( CGPointMake(2,18) )
-        bezierPath.addLineToPoint( CGPointMake(17,3) )
-        bezierPath.addLineToPoint( CGPointMake(bounds.width-5,3) )
-        bezierPath.addLineToPoint( CGPointMake(bounds.width-2,6) )
-        bezierPath.addLineToPoint( CGPointMake(bounds.width-2,bounds.height-18) )
-        bezierPath.addLineToPoint( CGPointMake(bounds.width-17,bounds.height-3) )
-        bezierPath.addLineToPoint( CGPointMake(5,bounds.height-3) )
-        bezierPath.addLineToPoint( CGPointMake(2,bounds.height-6) )
-        bezierPath.addLineToPoint( CGPointMake(2,bounds.height/2) )
-        bezierPath.closePath()
     
-        //apply path to shapelayer
-        var pathLayer : CAShapeLayer = CAShapeLayer()
-        pathLayer.path = bezierPath.CGPath
-        pathLayer.fillColor = UIColor.clearColor().CGColor
-        pathLayer.strokeColor = foreGround.CGColor
-        pathLayer.frame=CGRectMake(0, 0,bounds.width,bounds.height)
-        pathLayer.masksToBounds = true
-        
-        //add shape layer to view's layer
-        button.layer.mask = pathLayer
-        button.layer.addSublayer(pathLayer)
-    }
     
     //
     //   KEYBOARD CONSTRAINTS
     //
     func addIndividualButtonConstraints(buttons: [UIButton], mainView: UIView){
-        
-        var sh : String = "BORDER_"
-        switch BUTTON_SHAPE {
-        case 0:
-            sh += "SH1"
-        case 1:
-            sh += "SH2"
-        case 2:
-            sh += "SQ"
-        default:
-            sh += "RD"
-        }
-        
         if(buttons.count >= 7)
         {
             var _topConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Top, relatedBy: .Equal, toItem: mainView, attribute: .Top, multiplier: 1.0, constant: 2)
@@ -498,17 +453,15 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             _bottomConstraint.priority = 1000
             mainView.addConstraints([_bottomConstraint, _topConstraint])
         }
+        
         if(buttons.count == 9)
         {
-            var _middleConstraint = NSLayoutConstraint(item: buttons[4], attribute:.CenterX, relatedBy: .Equal, toItem: mainView, attribute: .CenterX, multiplier: 1.0, constant: 0)
-            mainView.addConstraint(_middleConstraint)
+            var _middleConstraint = NSLayoutConstraint(item: buttons[4], attribute:.CenterX, relatedBy: .Equal, toItem: mainView.superview, attribute: .CenterX, multiplier: 1.0, constant: 0)
+            mainView.superview!.addConstraint(_middleConstraint)
             var widthConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: screenWidth/10.7)
             mainView.addConstraints([widthConstraint])
             
-            buttons[4].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-            
             var l = 3, h = 5;
-            let dist : CGFloat = UIScreen.mainScreen().bounds.width / 125
             while l >= 0 {
                 
                 var LwidthConstraint = NSLayoutConstraint(item: buttons[l], attribute: .Width, relatedBy: .Equal, toItem: buttons[4], attribute: .Width, multiplier: 1.0, constant: 0)
@@ -523,21 +476,16 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
                 var LdistRight = NSLayoutConstraint(item: buttons[l], attribute: .Right, relatedBy: .Equal, toItem: buttons[l+1], attribute: .Left, multiplier: 1.0, constant: -2)
                 var HdistLeft = NSLayoutConstraint(item: buttons[h], attribute: .Left, relatedBy: .Equal, toItem: buttons[h-1], attribute: .Right, multiplier: 1.0, constant: 2)
 
-                if buttons[l].titleLabel?.text == "SH" {
+                if buttons[l].titleForState(.Reserved)?.uppercaseString == "SH" {
                     LwidthConstraint.constant = buttons[4].frame.width * 0.6
                     HwidthConstraint.constant = buttons[4].frame.width * 0.6
-                    
-                    sh += ""
                 }
-                
-                buttons[l].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-                buttons[h].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
                 
                 mainView.addConstraints([LwidthConstraint, HwidthConstraint])
                 mainView.addConstraints([LheightConstraint, HheightConstraint])
                 mainView.addConstraints([LcenterY, HcenterY])
                 mainView.addConstraints([LdistRight, HdistLeft])
-
+                
                 l--
                 h++
             }
@@ -547,10 +495,9 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         else if buttons.count == 10
         {
             var widthConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: screenWidth/10.7)
-            mainView.addConstraints([widthConstraint])
+            mainView.superview!.addConstraints([widthConstraint])
             
             var l = 4, h = 5
-            let dist : CGFloat = UIScreen.mainScreen().bounds.width / 140
             while l >= 0{
                 var LcenterY = NSLayoutConstraint(item: buttons[l], attribute: .CenterY, relatedBy: .Equal, toItem: buttons[4], attribute: .CenterY, multiplier: 1.0, constant: 0)
                 var HcenterY = NSLayoutConstraint(item: buttons[h], attribute: .CenterY, relatedBy: .Equal, toItem: buttons[4], attribute: .CenterY, multiplier: 1.0, constant: 0)
@@ -574,13 +521,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
                 mainView.addConstraints([LheightConstraint, HheightConstraint])
                 mainView.addConstraints([LwidthConstraint, HwidthConstraint])
                 mainView.addConstraints([LdistRight, HdistLeft])
-                
-                buttons[l].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-                buttons[h].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-//
-//                if buttons[l].tag == 1000 {
-//                    buttonWidth = buttons[l].frame.size.width
-//                }
+
                 l--
                 h++
             }
@@ -594,10 +535,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
 
             mainView.addConstraints([_middleConstraint, _widthConstraint])
 
-            buttons[3].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-
             var l = 2, h = 4;
-            let dist : CGFloat = UIScreen.mainScreen().bounds.width / 125
             while l >= 0 {
                 var LwidthConstraint = NSLayoutConstraint(item: buttons[l], attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: screenWidth/11 + buttons[3].frame.width*0.4)
                 var HwidthConstraint = NSLayoutConstraint(item: buttons[h], attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: screenWidth/11 + buttons[3].frame.width*0.4)
@@ -616,12 +554,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
                     HdistLeft.constant += 4
                     LwidthConstraint.constant = screenWidth/10.7 + buttons[3].frame.width*0.6
                     HwidthConstraint.constant = screenWidth/10.7 + buttons[3].frame.width*0.6
-                    
-                    sh += ""
                 }
-                
-                buttons[l].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-                buttons[h].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
 
                 mainView.addConstraints([LwidthConstraint, HwidthConstraint])
                 mainView.addConstraints([LheightConstraint, HheightConstraint])
@@ -635,7 +568,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         }
         else {
             var x :CGFloat = 0.0
-            
+
             // 123 NUMBERS BUTTON
             var _topConstraint = NSLayoutConstraint(item: buttons[0], attribute: .Top, relatedBy: .Equal, toItem: mainView, attribute: .Top, multiplier: 1.0, constant: 1)
             var _bottomConstraint = NSLayoutConstraint(item: buttons[0], attribute: .Bottom, relatedBy: .Equal, toItem: mainView, attribute: .Bottom, multiplier: 1.0, constant: -4)
@@ -644,7 +577,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             _topConstraint.priority = 1000
             _bottomConstraint.priority = 1000
             mainView.addConstraints([_leftConstraint, _bottomConstraint, _topConstraint, _widthConstraint])
-            buttons[0].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+
             x += (_leftConstraint.constant + _widthConstraint.constant)
             
             // NEXT BUTTON
@@ -654,7 +587,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             var leftConstraint = NSLayoutConstraint(item: buttons[1], attribute: .Left, relatedBy: .Equal, toItem: buttons[0], attribute: .Right, multiplier: 1.0, constant: 3)
             
             mainView.addConstraints([centerY, heightConstraint, widthConstraint, leftConstraint])
-            buttons[1].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+
             x += (leftConstraint.constant + _widthConstraint.constant)
 
             // MIC BUTTON
@@ -664,7 +597,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             leftConstraint = NSLayoutConstraint(item: buttons[2], attribute: .Left, relatedBy: .Equal, toItem: buttons[1], attribute: .Right, multiplier: 1.0, constant: 3)
             
             mainView.addConstraints([centerY, heightConstraint, widthConstraint, leftConstraint])
-            buttons[2].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+
             x += (leftConstraint.constant + _widthConstraint.constant)
 
             // SPACE BUTTON
@@ -674,7 +607,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             leftConstraint = NSLayoutConstraint(item: buttons[3], attribute: .Left, relatedBy: .Equal, toItem: buttons[2], attribute: .Right, multiplier: 1.0, constant: 3)
             
             mainView.addConstraints([centerY, heightConstraint, widthConstraint, leftConstraint])
-            buttons[3].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+
             x += (leftConstraint.constant + (_widthConstraint.constant * 2.65))
 
             // RETURN BUTTON
@@ -683,7 +616,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             leftConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Left, relatedBy: .Equal, toItem: buttons[3], attribute: .Right, multiplier: 1.0, constant: 3)
             var width = UIScreen.mainScreen().bounds.width - x - 8
             widthConstraint = NSLayoutConstraint(item: buttons[4], attribute: .Width, relatedBy: .Equal, toItem:nil, attribute:.NotAnAttribute, multiplier: 1.0, constant: width )
-            buttons[4].setBackgroundImage(UIImage(named: sh)?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+
             mainView.addConstraints([centerY, heightConstraint, leftConstraint, widthConstraint])
         }
     }
@@ -764,10 +697,12 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         //blur view
         var blur = UIBlurEffect(style:style)
         var blurView = UIVisualEffectView(effect: blur)
+        blurView.tag = 1
         
         // vibrancy view
         var vibrancy = UIVibrancyEffect(forBlurEffect: blurView.effect as UIBlurEffect)
         var vibrancyView = UIVisualEffectView(effect: vibrancy)
+        vibrancyView.tag = 1
         blurView.frame = frame
         vibrancyView.frame = frame
         vibrancyView.autoresizingMask = .FlexibleWidth | .FlexibleHeight
@@ -796,18 +731,17 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         frame.size.height = frame.height * 0.75
         var topToolbar = UIView(frame: frame)
         topToolbar .addSubview( giveBlurView(frame, style: BLUR_STYLE) )
-        
-//        let geniusButton = tintedIconButton(iconNamed: "Genius")
-//        geniusButton.center = lightVibrancyView.convertPoint(lightVibrancyView.center, fromView: lightVibrancyView.superview)
-//        lightVibrancyView.contentView.addSubview(geniusButton)
-        
+
         // create the button
         var screen = topToolbar.bounds;
         var w : CGFloat = 100;
         var rect = CGRectMake(screen.size.width/2 - w/2, screen.size.height/2 - w/2, w, w);
         var witButton = WITMicButton(frame: rect)
-        topToolbar.addSubview(witButton);
         
+        // ADD WIT BUTTON
+        var vibrancyView = (topToolbar.viewWithTag(1) as UIVisualEffectView).contentView.viewWithTag(1) as UIVisualEffectView
+        vibrancyView.contentView.addSubview(witButton);
+
         topToolbar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "micClick:"))
         
         frame = viw.frame
@@ -816,7 +750,6 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         var botToolbar = UIView(frame: frame)
         frame.origin.y = 0;
         botToolbar .addSubview(giveBlurView(frame, style: BLUR_STYLE))
-
         viw.addSubview(topToolbar)
         viw.addSubview(botToolbar)
         
@@ -825,7 +758,10 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         botLabel.textColor = foreGround
         botLabel.textAlignment = .Center
         botLabel.userInteractionEnabled = false
-        botToolbar.addSubview(botLabel)
+        
+        // ADD HIDE MIC LABEL
+        vibrancyView = (botToolbar.viewWithTag(1) as UIVisualEffectView).contentView.viewWithTag(1) as UIVisualEffectView
+        vibrancyView.contentView.addSubview(botLabel)
         
         botToolbar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "hideMic"))
         
