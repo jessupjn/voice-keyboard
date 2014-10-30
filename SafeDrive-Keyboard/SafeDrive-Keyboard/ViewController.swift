@@ -13,12 +13,15 @@ protocol MainViewControllerDelegate{
     func ForegroundColorChanged();
 }
 
-class ViewController: UITableViewController {
+class ViewController: UITableViewController, SelectionVCDelegate {
 
     var userPrefs : NSUserDefaults?
 
     @IBOutlet var keyboardPreview : UIView!
     var preview : KeyboardPreview?
+    
+    @IBOutlet var ThemeScheme : UILabel!
+    var _themeScheme : UIBlurEffectStyle = .Dark
     
     @IBOutlet var TrackSpeed : UISwitch!
     @IBAction func TrackSpeedToggle(sender : UISwitch){
@@ -36,34 +39,63 @@ class ViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         
+        // add keyboard preview
         preview = KeyboardPreview(frame: CGRect(x: 0, y: 0, width: keyboardPreview.frame.width, height: keyboardPreview.frame.height))
         keyboardPreview.addSubview(preview!)
         
+        
+        // end editing gesture recognizer
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action:"endEdit"))
         
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        // Do any additional setup after loading the view, typically from a nib.
+        
         userPrefs = NSUserDefaults(suiteName: "jack.com.keyboard.prefs")
-        if userPrefs!.objectForKey("TRACKS_SPEED") == nil {
+        if userPrefs?.objectForKey("TRACKS_SPEED") == nil {
             userPrefs!.setBool(false, forKey: "TRACKS_SPEED")
-            userPrefs!.setObject("THEME_YOSEMITE", forKey: "THEME")
-            userPrefs!.setInteger(2, forKey: "BUTTON_SHAPE")
-            userPrefs!.synchronize()
-            
-            ButtonShape.selectedSegmentIndex = userPrefs!.integerForKey("BUTTON_SHAPE")
-            TrackSpeed.setOn( userPrefs!.boolForKey("TRACKS_SPEED"), animated: false)
-            
         }
+        if userPrefs?.objectForKey("THEME") == nil {
+            userPrefs!.setObject("THEME_YOSEMITE", forKey: "THEME")
+        }
+        if userPrefs?.objectForKey("BUTTON_SHAPE") == nil {
+            userPrefs!.setInteger(2, forKey: "BUTTON_SHAPE")
+        }
+        if userPrefs?.objectForKey("TRACKS_SPEED") == nil {
+            userPrefs!.setBool(false, forKey: "TRACKS_SPEED")
+        }
+        if userPrefs?.objectForKey("THEME_SCHEME") == nil {
+            userPrefs!.setObject("DARK", forKey: "THEME_SCHEME")
+        }
+        
+        userPrefs!.synchronize()
+        
+        // initialize view with settings information correct
+        ButtonShape.selectedSegmentIndex = userPrefs!.integerForKey("BUTTON_SHAPE")
+        TrackSpeed.setOn( userPrefs!.boolForKey("TRACKS_SPEED"), animated: false)
+        switch userPrefs!.stringForKey("THEME_SCHEME")! {
+        case "LIGHT":
+            ThemeScheme!.text = "Light"
+        case "EXTRA_LIGHT":
+            ThemeScheme!.text = "Extra Light"
+        default:
+            ThemeScheme!.text = "Dark"
+        }
+        
         
         buildPreview()
-        
-        if NSBundle.mainBundle().bundleIdentifier! == "com.JacksonJessup.SafeD-Free" {
-            
-        } else {
-            
-        }
     }
 
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        var str = sender as String
+        if segue.identifier? == "SEGUE_MAKE_SELECTION" {
+            var vc = segue.destinationViewController as SelectionVC
+            vc.setupVC(["Extra Light", "Light", "Dark"], delegate: self)
+        }
+    }
     func endEdit(){
         self.view.endEditing(true)
     }
@@ -74,9 +106,20 @@ class ViewController: UITableViewController {
     }
     
     private func buildPreview(){
-        var theme : String = userPrefs!.stringForKey("THEME")!
+        var theme = userPrefs?.stringForKey("THEME")
         var btnShape = userPrefs?.integerForKey("BUTTON_SHAPE")
-        preview!.buildWith(.Dark, theme: theme, buttonShape: btnShape!)
+        var blurStyle : UIBlurEffectStyle = .Dark
+        
+        switch ThemeScheme.text! {
+        case "LIGHT":
+            blurStyle = .Light
+        case "EXTRA_LIGHT":
+            blurStyle = .ExtraLight
+        default:
+            blurStyle = .Dark
+        }
+        
+        preview!.buildWith(blurStyle, theme: theme!, buttonShape: btnShape!)
     }
     
     //
@@ -87,17 +130,18 @@ class ViewController: UITableViewController {
     }
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        if indexPath.row == 0 {
-            
-        } else if indexPath.row == 1 {
-            
-        } else if indexPath.row == 2 {
-            
-        } else if indexPath.row == 3 {
-            
-        } else if indexPath.row == 4 {
-            
-        }
+        self.performSegueWithIdentifier("SEGUE_MAKE_SELECTION", sender: "")
+    }
+
+    //
+    //                  SELECTIONVCDELEGATE METHODS
+    //
+     func didSelect(option: String, forOption: String) {
+//        switch forOption.uppercaseString {
+//        case "THEME":
+//    
+//        }
+        println("DIDSELECT")
     }
 
 }

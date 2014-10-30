@@ -46,7 +46,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
     var lowerCase : [String] = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "SH", "z", "x", "c", "v", "b", "n", "m", "⌫"]
     var upperCase : [String] = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "SH", "Z", "X", "C", "V", "B", "N", "M", "⌫"]
     var number1 : [String] = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "/", ":", ";", "(", ")", "$", "&", "@", "\"", "#+=", ".", ",", "?", "!", "'", "⌫"]
-    var number2 : [String] = ["[", "]", "{", "}", "#", "%", "^", "*", "+", "=", "_", "\\", "|", "~", "<", ">", "€", "£", "¥", "", "123", ".", ",", "?", "!", "'", "⌫"]
+    var number2 : [String] = ["[", "]", "{", "}", "#", "%", "^", "*", "+", "=", "_", "\\", "|", "~", "<", ">", "€", "£", "¥", "•", "123", ".", ",", "?", "!", "'", "⌫"]
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
@@ -257,7 +257,6 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         let button = UIButton(frame: CGRect(origin: CGPointZero, size: borderImage.size))
         button.frame = CGRectMake(0, 0, buttonWidth, 35)
         button.sizeToFit()
-        button.titleLabel!.font = UIFont.boldSystemFontOfSize(18)
         button.tag = tagNum++
         button.clipsToBounds = true
         
@@ -288,8 +287,9 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             }
         }
         
+        button.titleLabel!.font = UIFont.boldSystemFontOfSize(18)
         if countElements(title) > 2 {
-            button.titleLabel!.font = UIFont.systemFontOfSize(15)
+            button.titleLabel!.font = UIFont.boldSystemFontOfSize(15)
         }
 
         button.addTarget(self, action: "didTapButton:", forControlEvents: .TouchDown)
@@ -330,12 +330,9 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
                 buildKeyboard()
             case "#+=":
                 shiftState = .Number2
-                shiftButton?.setImage(UIImage(named: "SHIFT_NUMBER2")!.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-
                 buildKeyboard()
             case "123":
                 shiftState = .Number1
-                shiftButton?.setImage(UIImage(named: "SHIFT_NUMBER1")!.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
                 buildKeyboard()
             case "MIC":
                 showMic()
@@ -371,6 +368,11 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
                     } else {
                         proxy.deleteBackward()
                         proxy.insertText(". ")
+                        
+                        // autocapitalization
+                        if (checkForAutocaps()) && shiftState == ShiftStates.None {
+                            shiftButton?.sendActionsForControlEvents(.TouchUpInside)
+                        }
                     }
                     
                     title = "." // for autocapitalization
@@ -383,19 +385,16 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
                 lastChar = " "
                 
                 // keyboard back to regular
-                shiftState = .None
-                shiftButton?.setImage(UIImage(named: "SHIFT_NONE")!.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-                buildKeyboard()
-                
+                if shiftState == .Caps {
+                    shiftState = .None
+                    shiftButton?.setImage(UIImage(named: "SHIFT_NONE")!.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+                    buildKeyboard()
+                }
+        
                 dispatch_after( dispatch_time(DISPATCH_TIME_NOW, Int64(0.22 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), {
                     self.addPeriod = false
                     self.lastChar = ""
                 })
-            
-                // autocapitalization
-                if (checkForAutocaps()) && shiftState == ShiftStates.None {
-                    shiftButton?.sendActionsForControlEvents(.TouchUpInside)
-                }
             default:
                 lastChar = title!
                 if shiftState == ShiftStates.None {
@@ -686,6 +685,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             }
         }
     }
+    
     override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
         buildKeyboard()
     }
