@@ -120,7 +120,6 @@ class KeyboardPreview : UIView {
             button.setImage(iconImage, forState:.Normal)
             button.contentMode = .ScaleAspectFit
             button.setTitle(title, forState:.Reserved)
-            
         } else {
             if title.uppercaseString == "SH" {
                 button.setTitle(title, forState:.Reserved)

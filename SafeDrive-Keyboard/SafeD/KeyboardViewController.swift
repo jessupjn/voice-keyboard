@@ -50,7 +50,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
-    
+        buildKeyboard()
         // Add custom view sizing constraints here
     }
 
@@ -171,6 +171,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
     }
     
     func setCustomOptions() {
+        
         if userDefaults!.objectForKey("TRACKS_SPEED") != nil {
             TRACKS_SPEED = userDefaults!.boolForKey("TRACKS_SPEED")
             if TRACKS_SPEED {
@@ -190,6 +191,8 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         if userDefaults!.objectForKey("BACKGROUND_COLOR") != nil {
             backGround = userDefaults!.objectForKey("BACKGROUND_COLOR") as UIColor
         }
+        
+        println( userDefaults!.dictionaryRepresentation())
     }
 
     override func didReceiveMemoryWarning() {
@@ -293,6 +296,7 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
         }
 
         button.addTarget(self, action: "didTapButton:", forControlEvents: .TouchDown)
+        button.addTarget(self, action: "playSound:", forControlEvents: .TouchDown)
         button.addTarget(self, action: "submitString:", forControlEvents: .TouchUpInside)
         
         return button
@@ -307,6 +311,15 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
             typedString = ""
         }
         
+    }
+    
+    func playSound(sender: AnyObject?) {
+        return
+            
+        var path = NSBundle.mainBundle().URLForResource("", withExtension: "wav")
+        var sound : SystemSoundID = 0
+        AudioServicesCreateSystemSoundID(path, &sound)
+        AudioServicesPlaySystemSound(sound)
     }
     
     func didTapButton(sender: AnyObject?) {
@@ -670,25 +683,25 @@ class KeyboardViewController: UIInputViewController, CLLocationManagerDelegate, 
     //
     //              VIEW WILL ROTATE - DEVICE ROTATION
     //
-    override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
-        for view in self.view.subviews
-        {
-            if toInterfaceOrientation == .LandscapeLeft || toInterfaceOrientation == .LandscapeRight {
-                (view as UIView).frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.width,  UIScreen.mainScreen().bounds.height/1.5)
-            } else {
-                (view as UIView).frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.width,  UIScreen.mainScreen().bounds.height/3)
-            }
-            
-            for viw in view.subviews
-            {
-                viw.removeFromSuperview()
-            }
-        }
-    }
-    
-    override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
-        buildKeyboard()
-    }
+//    override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
+//        for view in self.view.subviews
+//        {
+//            if toInterfaceOrientation == .LandscapeLeft || toInterfaceOrientation == .LandscapeRight {
+//                (view as UIView).frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.width,  UIScreen.mainScreen().bounds.height/1.5)
+//            } else {
+//                (view as UIView).frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.width,  UIScreen.mainScreen().bounds.height/3)
+//            }
+//            
+//            for viw in view.subviews
+//            {
+//                viw.removeFromSuperview()
+//            }
+//        }
+//    }
+//    
+//    override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
+//        buildKeyboard()
+//    }
     
     //
     //              CREATE A BLUR VIEW

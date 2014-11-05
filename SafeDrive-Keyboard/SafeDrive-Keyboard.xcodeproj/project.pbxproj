@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0427D0AD1A080DF80065C784 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04B36FAC19EF0A3C00ADB773 /* Images.xcassets */; };
 		04434F1F1A02C8FE0073ADEA /* SelectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04434F1E1A02C8FE0073ADEA /* SelectionVC.swift */; };
-		0482E2FB19F1ABF4003B5378 /* IMG.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0482E2FA19F1ABF4003B5378 /* IMG.xcassets */; };
 		04B36FA619EF0A3C00ADB773 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B36FA519EF0A3C00ADB773 /* AppDelegate.swift */; };
 		04B36FA819EF0A3C00ADB773 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B36FA719EF0A3C00ADB773 /* ViewController.swift */; };
 		04B36FAB19EF0A3C00ADB773 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04B36FA919EF0A3C00ADB773 /* Main.storyboard */; };
@@ -67,7 +67,6 @@
 /* Begin PBXFileReference section */
 		043E709F19F9853A0052B55E /* SafeD-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SafeD-Bridging-Header.h"; sourceTree = "<group>"; };
 		04434F1E1A02C8FE0073ADEA /* SelectionVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectionVC.swift; sourceTree = "<group>"; };
-		0482E2FA19F1ABF4003B5378 /* IMG.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = IMG.xcassets; sourceTree = "<group>"; };
 		04B36FA019EF0A3C00ADB773 /* SafeDrive-Keyboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SafeDrive-Keyboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		04B36FA419EF0A3C00ADB773 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		04B36FA519EF0A3C00ADB773 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -187,7 +186,6 @@
 			children = (
 				04B36FCD19EF0ABA00ADB773 /* KeyboardViewController.swift */,
 				04B36FCB19EF0ABA00ADB773 /* Supporting Files */,
-				0482E2FA19F1ABF4003B5378 /* IMG.xcassets */,
 			);
 			path = SafeD;
 			sourceTree = "<group>";
@@ -338,7 +336,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0482E2FB19F1ABF4003B5378 /* IMG.xcassets in Resources */,
+				0427D0AD1A080DF80065C784 /* Images.xcassets in Resources */,
 				04DE7A2A19FEB70A0087FB4E /* microphone.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
